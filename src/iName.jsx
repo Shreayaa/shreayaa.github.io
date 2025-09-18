@@ -10,7 +10,6 @@ import prototypeProfile from './assets/iname/prototype2.png';
 import prototypeGroups from './assets/iname/prototype3.png';
 import prototypeExplore from './assets/iname/prototype4.png';
 import prototypeDevices from './assets/iname/prototype5.png';
-import iNameShowcase from './assets/iname/iName showcase.mp4';
 
 const caseStudySections = [
   {
@@ -188,10 +187,18 @@ const caseStudySections = [
         </div>
         <div style={{marginTop: '1.5rem'}}>
           <h3 style={{margin: 0, color: 'var(--text-secondary)'}}>Watch how the solution works in real life</h3>
-          <video controls style={{maxWidth: '100%', marginTop: '1rem', borderRadius: '12px'}}>
-            <source src={iNameShowcase} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          <div style={{maxWidth: '100%', marginTop: '1rem', borderRadius: '12px'}}>
+            <iframe
+              width="100%"
+              height="506"
+              src="https://www.youtube.com/embed/hC4MDLmYAGg"
+              title="iName Showcase"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              style={{borderRadius: '12px', width: '100%', maxWidth: '900px', height: '506px', display: 'block'}}
+            ></iframe>
+          </div>
         </div>
       </div>
     )

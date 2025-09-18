@@ -15,7 +15,6 @@ import communityScreen from './assets/ithaca-soap/community.png';
 import communityNewsScreen from './assets/ithaca-soap/communityNews.png';
 import wireframingProcess from './assets/ithaca-soap/lowfi.jpg';
 import taskFlowBreakdown from './assets/ithaca-soap/taskFlow.png';
-import ithacaSoapVideo from './assets/ithaca-soap/ithacaSoapco.MP4';
 
 const caseStudySections = [
   {
@@ -241,19 +240,18 @@ const caseStudySections = [
           justifyContent: 'center',
           margin: '2rem 0'
         }}>
-          <video 
-            controls 
-            style={{
-              width: '100%',
-              maxWidth: '400px',
-              height: 'auto',
-              borderRadius: '12px',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
-            }}
-          >
-            <source src={ithacaSoapVideo} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          <div style={{width: '100%', maxWidth: '400px', height: 'auto', borderRadius: '12px', boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'}}>
+            <iframe
+              width="100%"
+              height="400"
+              src="https://www.youtube.com/embed/GDo7jKW1DII"
+              title="Ithaca Soap Showcase"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              style={{borderRadius: '12px', width: '100%', maxWidth: '400px', height: '400px', display: 'block'}}
+            ></iframe>
+          </div>
         </div>
         <p className="image-caption">Interactive prototype demonstration showing the complete user journey</p>
       </div>

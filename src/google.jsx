@@ -15,7 +15,6 @@ import fhmw from './assets/google-cloud/fhmw.png';
 import designPrinciple1 from './assets/google-cloud/designPrinciple1.png';
 import designPrinciple2 from './assets/google-cloud/designPrinciple2.png';
 import designPrinciple3 from './assets/google-cloud/designPrinciple3.png';
-import cgcFinal from './assets/google-cloud/CGCfinal.mov';
 
 const caseStudySections = [
   {
@@ -181,32 +180,18 @@ const caseStudySections = [
         <p>
           Our final solution was a high-fidelity prototype of a guided onboarding experience for Google Cloud. It embodied interactivity, progressive disclosure, and clarity through visuals — making it easier for beginners to navigate, learn, and build.
         </p>
-        <video 
-          controls 
-          muted 
-          loop
-          playsInline
-          preload="metadata"
-          className="fade-in-up"
-          style={{
-            width: '100%',
-            maxWidth: '900px',
-            height: 'auto',
-            margin: '2rem auto 0.5rem auto',
-            borderRadius: '12px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-            display: 'block'
-          }}
-        >
-          <source src={cgcFinal} type="video/quicktime" />
-          <source src={cgcFinal} type="video/mp4" />
-          <p>
-            Your browser does not support the video tag. 
-            <a href={cgcFinal} target="_blank" rel="noopener noreferrer">
-              Click here to download and view the video
-            </a>
-          </p>
-        </video>
+        <div className="fade-in-up" style={{width: '100%', maxWidth: '900px', margin: '2rem auto 0.5rem auto', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', display: 'block'}}>
+          <iframe
+            width="100%"
+            height="506"
+            src="https://www.youtube.com/embed/g4A4sPdYbSs"
+            title="Google Cloud Guided Onboarding Experience"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            style={{borderRadius: '12px', width: '100%', maxWidth: '900px', height: '506px', display: 'block'}}
+          ></iframe>
+        </div>
         <p className="image-caption">Final Prototype: Google Cloud Guided Onboarding Experience</p>
       </div>
     )
