@@ -900,7 +900,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
       <header className="header">
         <div className="content-container">
           <div className="header-content">
-            <a href="/portfolio/">
+            <a href="/">
               <div className="logo">
                 <img src={logo} alt="Shreayaa Srinivasan Logo" className="custom-logo" />
               </div>
