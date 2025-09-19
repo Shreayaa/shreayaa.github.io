@@ -638,14 +638,14 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           font-weight: 800;
           margin-bottom: 1.2rem;
           color: #2d2d2d;
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+          font-family: 'Roboto', sans-serif;
           line-height: 1.3;
         }
 
         .card-content p {
           font-size: 1.25rem;
           color: #2d2d2d;
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+          font-family: 'Roboto', sans-serif;
           line-height: 1.7;
           font-weight: 600;
         }

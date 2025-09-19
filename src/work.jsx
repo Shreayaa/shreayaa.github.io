@@ -76,7 +76,7 @@ const projects = [
   },
   {
     id: 6,
-    title: " R Shiny Dashboard",
+    title: "Immunization Data Analysis Dashboard",
     description: "Developed an interactive dashboard that transforms messy vaccination data into clear insights for educators and policymakers.",
     image: rShiny,
     imageType: "mobile",

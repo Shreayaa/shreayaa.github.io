@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import logo from './assets/general/profile.png';
 import googleCloudMockup from './assets/google-cloud/capstone-mockup.png';
 import haikuAppBuildProcess from './assets/google-cloud/haiku-app-build-process.png';
-import cornellChatbotBuildProcess from './assets/google-cloud/cornell-chatbot-build-process.png.png';
+import cornellChatbotBuildProcess from './assets/google-cloud/cornell-chatbot-build-process.png';
 import painPoint1 from './assets/google-cloud/painPoint1.png';
 import painPoint2 from './assets/google-cloud/painPoint2.png';
 import painPoint3 from './assets/google-cloud/painPoint3.png';
