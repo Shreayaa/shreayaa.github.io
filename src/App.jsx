@@ -900,7 +900,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
       <header className="header">
         <div className="content-container">
           <div className="header-content">
-            <a href="/">
+            <a href="/portfolio/">
               <div className="logo">
                 <img src={logo} alt="Shreayaa Srinivasan Logo" className="custom-logo" />
               </div>
@@ -1047,9 +1047,9 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
 
 function App() {
   return (
-    <Router basename="/portfolio/">
+    <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/portfolio/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
         <Route path="/playground" element={<Playground />} /> 
         <Route path="/work" element={<Work />} /> 
