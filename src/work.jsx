@@ -22,7 +22,7 @@ import docsLogo from './assets/tools/google-docs.png';
 import photoshopLogo from './assets/tools/Adobe Photoshop.png';
 import vueLogo from './assets/tools/Vue.js.png';
 import vuetifyLogo from './assets/tools/Veutify.png';
-import githubLogo from './assets/tools/Github.png';
+import githubLogo from './assets/tools/GitHub.png';
 import copilotLogo from './assets/tools/copilot-color.png';
 import canvaLogo from './assets/tools/Canva.png';
 import ggplotLogo from './assets/tools/ggplot.svg.png';
