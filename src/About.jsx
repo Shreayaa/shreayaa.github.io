@@ -78,8 +78,8 @@ const timelineData = [
 ];
 
 const skillsData = [
-  "Interaction Design", "Interdisciplinary Thinking", "Community Building", "Conflict Resolution", "Leadership", "Mentorship",
-  "Mixed Methods Research", "Prototyping", "Qualitative Analysis", "Co-Design", "Programming", "Teamwork"
+  "Interaction Design", "Interdisciplinary Thinking", "Prototyping", "Mixed Methods Research", "Co-design", "Qualitative Analysis",
+  "Programming", "Community Building", "Conflict Resolution", "Leadership", "Mentorship", "Teamwork"
 ];
 
 function About() {
@@ -849,7 +849,7 @@ function About() {
               <a href="/work">WORK</a>
               <a href="/playground">PLAYGROUND</a>
               <a href="/about">ABOUT</a>
-              <a href="https://drive.google.com/file/d/1Ck0VoQj4Z5gCS6YomoHuaNHGsYRvC7BQ/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+              <a href="https://drive.google.com/file/d/1nE7H77ctf1esubvyXuKoVVAPnDlRB8R0/view?usp=sharing" target="_blank" rel="noopener noreferrer">
                 RESUME
               </a>
             </nav>
@@ -940,15 +940,26 @@ function About() {
             </div>
             
             <div className="skills-grid">
-              {skillsData.map((skill, index) => (
-                <div 
-                  key={index} 
-                  ref={el => skillsRef.current[index] = el}
-                  className="skill-item"
-                >
-                  <span>{skill}</span>
-                </div>
-              ))}
+              {skillsData.map((skill, index) => {
+                // Calculate row index (assuming 4 columns per row)
+                const columns = 4;
+                const row = Math.floor(index / columns);
+                let bgColor;
+                if (row === 0) bgColor = '#b3dee2';
+                else if (row === 1) bgColor = '#b3b7ee';
+                else bgColor = '#e27396';
+
+                return (
+                  <div
+                    key={index}
+                    ref={el => skillsRef.current[index] = el}
+                    className="skill-item"
+                    style={{ background: bgColor }}
+                  >
+                    <span>{skill}</span>
+                  </div>
+                );
+              })}
             </div>
 
             <p className="skills-description">
