@@ -1047,7 +1047,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
 
 function App() {
   return (
-    <Router>
+    <Router basename="/shreayaasrini.github.io/">
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
