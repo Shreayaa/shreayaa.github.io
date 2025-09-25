@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import trophyIcon from './assets/general/trophy.png';
 import logo from './assets/general/profile.png';
 import capstoneMockup from './assets/google-cloud/capstone-mockup.png';
 import ithacaSoapMockup from './assets/ithaca-soap/ithaca-soap-mockup.png';
@@ -828,20 +829,34 @@ function Work() {
 
                 {/* Render tool logos for Routes to Roots App (project id 3) */}
                 {project.id === 3 && (
-                  <div className="tool-logos-row">
-                    {[figmaTool, miroLogo, canvaLogo, rLogo, openai, docsLogo, photoshopLogo].map((logoSrc, idx) => (
-                      <img key={idx} src={logoSrc} alt={`routes-tool-${idx}`} className="tool-logo" />
-                    ))}
-                  </div>
+                  <>
+                    <div className="tool-logos-row">
+                      {[figmaTool, miroLogo, canvaLogo, rLogo, openai, docsLogo, photoshopLogo].map((logoSrc, idx) => (
+                        <img key={idx} src={logoSrc} alt={`routes-tool-${idx}`} className="tool-logo" />
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem' }}>
+                      <img src={trophyIcon} alt="Trophy" style={{ width: '28px', height: '28px', objectFit: 'contain', marginRight: '0.5rem' }} />
+                      <span style={{ fontSize: '1.2rem', color: '#4a4a4a', fontWeight: 400, lineHeight: '1.7' }}>
+                        Awarded best project for social impact and uniqueness amongst 15+ teams in class
+                      </span>
+                    </div>
+                  </>
                 )}
-
-                {/* Render tool logos for iName App (project id 4) */}
                 {project.id === 4 && (
-                  <div className="tool-logos-row">
-                    {[figmaTool, miroLogo, canvaLogo, openai, docsLogo].map((logoSrc, idx) => (
-                      <img key={idx} src={logoSrc} alt={`iname-tool-${idx}`} className="tool-logo" />
-                    ))}
-                  </div>
+                  <>
+                    <div className="tool-logos-row">
+                      {[figmaTool, miroLogo, canvaLogo, openai, docsLogo].map((logoSrc, idx) => (
+                        <img key={idx} src={logoSrc} alt={`iname-tool-${idx}`} className="tool-logo" />
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem' }}>
+                      <img src={trophyIcon} alt="Trophy" style={{ width: '28px', height: '28px', objectFit: 'contain', marginRight: '0.5rem' }} />
+                      <span style={{ fontSize: '1.2rem', color: '#4a4a4a', fontWeight: 400, lineHeight: '1.7' }}>
+                        Awarded best project for social impact amongst 250+ students in class
+                      </span>
+                    </div>
+                  </>
                 )}
 
                 {/* Render tool logos for EcoCart App (project id 5) */}

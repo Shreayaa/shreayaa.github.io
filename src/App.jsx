@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, ArrowUpRight, Mail, Linkedin, Dribbble } from 'lucide-react';
 import logo from './assets/general/profile.png';
-import shreayaaPhoto from './assets/general/shreayaa.png';
+import shreayaaPhoto from './assets/general/heroImage.png';
 import About from './About';
 import Playground from './playground';
 import Work from './work';
@@ -314,7 +314,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
 
         .hero-content {
           display: flex;
-          align-items: center;
+          align-items: flex-end;
           justify-content: space-between;
           gap: 4rem;
           width: 100%;
@@ -427,9 +427,11 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           animation: slideInRight 1s ease-out;
           position: relative;
           display: flex;
-          align-items: flex-start;
+          align-items: flex-end;
           justify-content: flex-start;
-          margin-top: -150px;
+          margin-top: 0;
+          /* Pull image up to align with text baseline */
+          margin-bottom: 2.5rem;
         }
 
         @keyframes slideInRight {
@@ -444,7 +446,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
         }
 
         .hero-photo img {
-          width: clamp(350px, 45vw, 480px);
+          width: clamp(320px, 32vw, 420px);
           height: auto;
           object-fit: contain;
           object-position: center bottom;

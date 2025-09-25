@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "homepage": "https://shreayaa.github.io/",
-
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -20,7 +19,8 @@
     "react-router-dom": "^7.9.1",
     "react-simple-typewriter": "^5.0.1",
     "react-slick": "^0.30.3",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "three": "^0.180.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
