@@ -812,7 +812,7 @@ function Work() {
                 {/* Render tool logos ONLY for Cornell x Google Cloud (project id 1) */}
                 {project.id === 1 && project.toolLogos && (
                   <div className="tool-logos-row">
-                   {[gcloud, colab, dialogflow, vertex, gemini, pythonLogo, slack, notion].map((logoSrc, idx) => (
+                   {[gcloud, colab, dialogflow, vertex, gemini, pythonLogo, figmaTool, slack, notion].map((logoSrc, idx) => (
                       <img key={idx} src={logoSrc} alt={`tool-${idx}`} className="tool-logo" />
                     ))}
                   </div>
