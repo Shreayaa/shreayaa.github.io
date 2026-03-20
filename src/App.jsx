@@ -911,7 +911,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
               <a href="/work">WORK</a>
               <a href="/playground">PLAYGROUND</a>
               <a href="/about">ABOUT</a>
-              <a href="https://drive.google.com/file/d/1nE7H77ctf1esubvyXuKoVVAPnDlRB8R0/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+              <a href="https://drive.google.com/file/d/1Qhppc22iG-1iBeIK1sT6zLXWCVWqF0U0/view?usp=sharing" target="_blank" rel="noopener noreferrer">
                 RESUME
               </a>
             </nav>
