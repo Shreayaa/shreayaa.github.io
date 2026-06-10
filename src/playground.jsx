@@ -1,4 +1,5 @@
 import React from 'react';
+import { Sprout } from 'lucide-react';
 import logo from './assets/general/profile.png';
 
 function Playground() {
@@ -378,12 +379,13 @@ function Playground() {
               </div>
             </a>
             <nav className="nav-links">
-              <a href="/work">WORK</a>
+              <a href="/" onClick={(e) => { e.preventDefault(); if (window.location.pathname === '/') { const el = document.getElementById('google-cloud'); if (el) el.scrollIntoView({ behavior: 'smooth' }); } else { sessionStorage.setItem('scrollTo', 'google-cloud'); window.location.href = '/'; } }}>WORK</a>
               <a href="/playground">PLAYGROUND</a>
               <a href="/about">ABOUT</a>
-              <a href="https://drive.google.com/file/d/1nE7H77ctf1esubvyXuKoVVAPnDlRB8R0/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+              <a href="https://drive.google.com/file/d/1npO4k4AAveQdBizDO5rMsA64DmfxBzLA/view?usp=sharing" target="_blank" rel="noopener noreferrer">
                 RESUME
               </a>
+              <a href="/garden" title="The Garden — plant something 🌱"><Sprout size={20} /></a>
             </nav>
           </div>
         </div>
@@ -430,7 +432,7 @@ function Playground() {
             </a>
           </div>
 
-          <p className="footer-copyright">Designed + Coded with 🩷 by Shreayaa Srinivasan © 2025 </p>
+          <p className="footer-copyright">Designed + Coded with 🩷 by Shreayaa Srinivasan © 2026 </p>
         </div>
       </footer>
     </div>

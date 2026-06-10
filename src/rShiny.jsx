@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
-import logo from './assets/general/profile.png';
+import SiteHeader from './components/SiteHeader';
 import rShinyMockup from './assets/r-shiny/rShiny.png';
 import finalProduct1 from './assets/r-shiny/finalProduct1.png';
 import finalProduct2 from './assets/r-shiny/finalProduct2.png';
@@ -1018,25 +1018,7 @@ function RShinyCaseStudy() {
       </style>
 
       {/* HEADER */}
-      <header className="header">
-        <div className="content-container">
-          <div className="header-content">
-            <a href="/">
-              <div className="logo">
-                <img src={logo} alt="Shreayaa Srinivasan Logo" className="custom-logo" />
-              </div>
-            </a>
-            <nav className="nav-links">
-              <a href="/work">WORK</a>
-              <a href="/playground">PLAYGROUND</a>
-              <a href="/about">ABOUT</a>
-              <a href="https://drive.google.com/file/d/1nE7H77ctf1esubvyXuKoVVAPnDlRB8R0/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-                RESUME
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* MAIN CONTENT */}
       <div className="case-study-layout">
@@ -1117,7 +1099,7 @@ function RShinyCaseStudy() {
 
       {/* NAVIGATION BUTTONS */}
       <div className="nav-buttons">
-        <a href="/work" className="nav-button primary">
+        <a href="/#work" className="nav-button primary">
           View My Other Work
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M7 17L17 7M17 7H7M17 7V17"/>
@@ -1161,7 +1143,7 @@ function RShinyCaseStudy() {
             </a>
           </div>
 
-          <p className="footer-copyright">Designed + Coded with ❤️ by Shreayaa Srinivasan © 2025</p>
+          <p className="footer-copyright">Designed + Coded with ❤️ by Shreayaa Srinivasan © 2026</p>
         </div>
       </footer>
     </div>

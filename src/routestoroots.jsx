@@ -1,1290 +1,1477 @@
-import React from 'react';
-import { useEffect } from 'react';
-import logo from './assets/general/profile.png';
-import routesMockup from './assets/routes-to-roots/routes.png';
-import item1 from './assets/routes-to-roots/item1.jpeg';
-import item2 from './assets/routes-to-roots/item2.jpg';
-import item3 from './assets/routes-to-roots/item3.jpeg';
-import item4 from './assets/routes-to-roots/item4.JPG';
-import item5 from './assets/routes-to-roots/item5.png';
-import persona from './assets/routes-to-roots/Persona.jpg';
-import method2data1 from './assets/routes-to-roots/method2data1.png';
-import method2data2 from './assets/routes-to-roots/method2data2.png';
-import finalDesign from './assets/routes-to-roots/finalDesign.png';
+import React, { useState, useEffect, useRef } from 'react';
+import SiteHeader from './components/SiteHeader';
+import SiteFooter from './components/SiteFooter';
+import { CountBox, CardStack, RoadConnector } from './components/CaseStudyShared';
+import googleMockup     from './assets/google-cloud/capstone-mockup.png';
+import ithacaSoapMockup from './assets/ithaca-soap/ithaca-soap-mockup.png';
+import routesMockup     from './assets/routes-to-roots/routes.png';
+import girlAvatar       from './assets/routes-to-roots/girl.png';
+import boyAvatar        from './assets/routes-to-roots/boy.png';
+import figmaLogo        from './assets/tools/figma.png';
+import miroLogo         from './assets/tools/Miro-Icon.png';
+import canvaLogo        from './assets/tools/Canva.png';
+import rLogo            from './assets/tools/R.png';
+import chatgptLogo      from './assets/tools/OpenAI-black-monoblossom.png';
+import photoshopLogo    from './assets/tools/Adobe Photoshop.png';
+import interviewImg     from './assets/routes-to-roots/interview.JPG';
+import probesImg        from './assets/routes-to-roots/item1.jpeg';
+import probe2           from './assets/routes-to-roots/item2.jpg';
+import probe3           from './assets/routes-to-roots/item3.jpeg';
+import probe4           from './assets/routes-to-roots/item4.JPG';
+import probe5           from './assets/routes-to-roots/item5.png';
+import findings1         from './assets/routes-to-roots/method2data1.png';
+import findings2         from './assets/routes-to-roots/method2data2.png';
+import findings3         from './assets/routes-to-roots/method2data3.png';
+import findings4         from './assets/routes-to-roots/method2data4.png';
+import personaImg       from './assets/routes-to-roots/Persona.jpg';
+import autoethnoImg     from './assets/routes-to-roots/Auto.png';
+import ideationImg      from './assets/routes-to-roots/ideation.jpeg';
+import finalDesignImg   from './assets/routes-to-roots/finaldesign.JPG';
+import groupImg         from './assets/routes-to-roots/group.JPG';
+import fd1              from './assets/routes-to-roots/fd1.png';
+import fd2              from './assets/routes-to-roots/fd2.png';
+import fd3              from './assets/routes-to-roots/fd3.png';
+import fd4              from './assets/routes-to-roots/fd4.png';
 
-const caseStudySections = [
-  {
-    id: 1,
-    title: "Overview",
-    content: (
-      <div>
-        <p>
-          It's the beginning of a new semester at college. You're juggling classes, clubs, assignments, and the million things happening on campus. But in the middle of all that chaos, something feels off.
-        </p>
-        <p>
-          Maybe the traditional dance you used to practice every week is now a once-a-semester thing. Maybe it's that you haven't cooked the recipes you grew up with in months. Or maybe it's simply the quiet ache of not hearing your language spoken outside your phone calls home.
-        </p>
-        <p>
-          For students from culturally diverse backgrounds, hobbies aren't just ways to pass time. They are a way of remembering who you are while building who you're becoming. And yet, we found that these practices are the first to be sacrificed in the grind of university life.
-        </p>
-        <p>
-          That disconnect is what inspired <strong>Routes to Roots</strong>: a project to understand the barriers to cultural hobby engagement and design a solution that helps students reconnect, reflect, and sustain their cultural practices.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 2,
-    title: "My Role",
-    content: (
-      <div>
-        <ul>
-          <li>Designed and distributed the cultural probe kits to participants.</li>
-          <li>Conducted exit interviews and synthesized responses through coding and affinity mapping.</li>
-          <li>Participated in the autoethnography study, journaling experiences with hobby-related apps.</li>
-          <li>Contributed to creating personas and defining design objectives based on findings.</li>
-          <li>Collaborated on the Routes to Roots kiosk concept, including user flow and interaction design.</li>
-        </ul>
-      </div>
-    )
-  },
-  {
-    id: 3,
-    title: "Research Process",
-    content: (
-      <div>
-        <p>To explore these, we followed these sprints:</p>
-        <ol>
-          <li>Interviewed and observed students who practiced cultural hobbies.</li>
-          <li>As the first method, we used cultural probes and diary studies to capture lived experiences.</li>
-          <li>As the second method, we conducted an autoethnography, where we became participants ourselves.</li>
-          <li>Analyzed the data we collected in the methods through affinity mapping, personas, word clouds, and graphs.</li>
-          <li>Prototyped and wireframed the kiosk-based solution.</li>
-        </ol>
-
-        <h4>Method 1: Cultural Probes & Diaries</h4>
-        <p>
-          We recruited 10 students from cultural clubs across Cornell. Their hobbies ranged from cultural dance to cooking, calligraphy, and music.
-        </p>
-        <p>Each student received a cultural-probe kit with four parts:</p>
-        <ul>
-          <li>A diary study with daily questions about cultural connections and hobby engagement.</li>
-          <li>
-            A handmade scrapbook wherein the participants had to:
-            <ul>
-              <li>Draw pictures/drawings about how they perceive their cultural hobbies</li>
-              <li>Fill out an index card documenting feelings about what they miss</li>
-              <li>Keep a timeline map tracking hobby journeys to mark peaks and lows</li>
-              <li>Place themselves in a "Community-Web" diagram where they map their connections to different communities</li>
-            </ul>
-          </li>
-          <li>A weekly schedule grid recording time spent on academic commitments, required extracurricular commitments, leisurely hobbies, and cultural activities.</li>
-          <li>A postcard to future self</li>
-        </ul>
-
-        <div className="probe-kit-gallery">
-          <img src={item1} alt="Cultural probe kit overview - diary and scrapbook materials" />
-          <img src={item2} alt="Daily diary study template with cultural connection questions" />
-          <img src={item3} alt="Participant persona - Maya Chen, tentative explorer" />
-          <img src={item5} alt="Scrapbook pages with cultural hobby reflections and community mapping" />
-          <img src={item4} alt="Letter to future self about cultural hobby goals" />
-        </div>
-
-        <h5>What we found</h5>
-        <ul>
-          <li>One participant wrote about cooking as "the only way I feel at home again," while another described the pride of explaining her culture to friends through film.</li>
-          <li>Most cultural hobbies occupied just 0–3 hours a week, often disappearing during busy academic stretches. One participant simply wrote, "No time. Makes me sad."</li>
-          <li>Postcards revealed a longing to stay connected. "Don't let work wash away your passion," one wrote to their future self.</li>
-        </ul>
-        <p>We created a persona to guide us.</p>
-
-        <img src={persona} alt="Maya Chen persona - showing user goals, pain points, and expectations for cultural hobby engagement" />
-
-        <h4>Method 2: Autoethnography</h4>
-        <p>
-          As a team, we resonated with much of the problem statement, and what we found with method 1 we decided to turn inward. We each chose a hobby-related app (from music practice trackers to cooking platforms) and used them daily for a week while journaling our experiences.
-        </p>
-        <h5>What we noticed</h5>
-        <ul>
-          <li>Writing about a cooking app, one teammate noted that the joy came not from the interface, but from memories with their cousins back home.</li>
-          <li>Apps lacked built-in motivators: No streaks, reminders, or emotional check-ins meant enthusiasm faded quickly.</li>
-          <li>We wanted to track how hobbies made us feel, not just how many minutes we logged.</li>
-          <li>We felt tone mattered. Apps that offered storytelling or cultural context resonated far more than mechanical, checklist-style ones.</li>
-        </ul>
-        <p>
-          This exercise made one thing clear: digital apps alone wouldn't cut it. Students needed cultural engagement to be easily available and emotionally resonant.
-        </p>
-
-        <img src={method2data1} alt="Feature-based frustration triggers across apps - heatmap showing user pain points" />
-        <img src={method2data2} alt="Percentage of days app encouraged motivation - showing which apps were most effective" />
-      </div>
-    )
-  },
-  {
-    id: 4,
-    title: "Design",
-    content: (
-      <div>
-        <p>
-          We decided against building "just another app." Instead, we created a kiosk-based system, a visible, physical presence on campus in common spaces.
-        </p>
-        <p>
-          Why a kiosk? Because visibility itself is part of the intervention. By embedding cultural expression into shared spaces, we aimed to normalize it, celebrate it, and make it discoverable.
-        </p>
-        <h5>Key Features</h5>
-        <ul>
-          <li><strong>Explore:</strong> Students tap their ID and browse cultural hobbies, peer groups, events, and practice spaces.</li>
-          <li><strong>Contribute:</strong> They can add their own cultural practices, keeping the system alive and inclusive.</li>
-          <li><strong>Connect:</strong> After each interaction, students receive a curated follow-up email with event links, peer contacts, or reflection prompts.</li>
-        </ul>
-        <p>
-          Instead of productivity dashboards, the kiosk offers gentle reminders that say: "Your roots matter."
-        </p>
-        <img src={finalDesign} alt="Routes to Roots kiosk interface showing cultural hobby options and community connections" />
-      </div>
-    )
-  },
-  {
-    id: 5,
-    title: "Final Design",
-    content: (
-      <div>
-        <p>Watch how the design would work in real life.</p>
-        <div className="video-container">
-          <iframe
-            src="https://www.youtube.com/embed/NbugF3D0B9k"
-            title="Routes to Roots - Final Design Demo"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
-        </div>
-      </div>
-    )
-  },
-  {
-    id: 6,
-    title: "What Did I Learn?",
-    content: (
-      <div>
-        <ul>
-          <li>I learned how important it is to design beyond usability, creating systems that resonate emotionally. Routes to Roots wasn't about efficiency; it was about belonging.</li>
-          <li>Using both cultural probes and autoethnography taught me the strength of combining generative and reflective research.</li>
-          <li>This project and this course as a whole taught me that sometimes the right design intervention isn't another digital app. Considering the physical context of campus life helped us create a more visible and impactful solution.</li>
-        </ul>
-      </div>
-    )
-  }
+/* ── Stacking iMessage Research-Question Cards ─────────────────── */
+const QUESTION_CARDS = [
+  { num: '01', msg: 'How do students currently experience and emotionally relate to their cultural hobbies while navigating academic life?' },
+  { num: '02', msg: 'What barriers, emotional, institutional, or social, prevent consistent engagement in cultural hobbies?' },
+  { num: '03', msg: 'How might digital or physical systems better support students in building a sustainable, emotionally reflective cultural hobby practice?' },
 ];
 
-function RoutesToRoots() {
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(`section-${sectionId}`);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+/* ── Main component ────────────────────────────────────────────── */
+export default function RoutesToRoots() {
+  const [impactInView, setImpactInView] = useState(false);
+  const [activeSection, setActiveSection] = useState('context');
+  const [modalImages, setModalImages] = useState(null); // array of srcs, or null
+  const [modalIndex, setModalIndex] = useState(0);
+  const impactRef = useRef(null);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Open the lightbox with one image or a navigable gallery
+  const openModal = (imgs, idx = 0) => {
+    setModalImages(Array.isArray(imgs) ? imgs : [imgs]);
+    setModalIndex(idx);
   };
+  const closeModal = () => setModalImages(null);
+  const modalNext = (e) => { e.stopPropagation(); setModalIndex(i => (i + 1) % modalImages.length); };
+  const modalPrev = (e) => { e.stopPropagation(); setModalIndex(i => (i - 1 + modalImages.length) % modalImages.length); };
 
-  // Scroll animation effect
   useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -100px 0px'
+    /* scroll-reveal for all animated elements */
+    const revObs = new IntersectionObserver(
+      (entries) => entries.forEach(e => e.isIntersecting && e.target.classList.add('visible')),
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.fade-up, .fade-left, .fade-right')
+            .forEach(el => revObs.observe(el));
+
+    /* impact counter trigger */
+    const impObs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setImpactInView(true); impObs.disconnect(); } },
+      { threshold: 0.1 }
+    );
+    if (impactRef.current) impObs.observe(impactRef.current);
+
+    const SECTION_IDS = ['context', 'overview', 'problem', 'solution-preview', 'impact',
+      'design-process', 'final-design', 'not-to-build', 'takeaways', 'skills'];
+    const handleScroll = () => {
+      const trigger = window.innerHeight * 0.35;
+      let current = SECTION_IDS[0];
+      for (const id of SECTION_IDS) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= trigger) current = id;
+      }
+      setActiveSection(current);
     };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, observerOptions);
-
-    // Observe all elements with animation classes
-    const animatedElements = document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right');
-    animatedElements.forEach(el => observer.observe(el));
-
-    return () => observer.disconnect();
+    return () => { revObs.disconnect(); impObs.disconnect(); window.removeEventListener('scroll', handleScroll); };
   }, []);
 
+  /* keyboard navigation for the lightbox */
+  useEffect(() => {
+    if (!modalImages) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setModalImages(null);
+      else if (modalImages.length > 1 && e.key === 'ArrowRight') setModalIndex(i => (i + 1) % modalImages.length);
+      else if (modalImages.length > 1 && e.key === 'ArrowLeft')  setModalIndex(i => (i - 1 + modalImages.length) % modalImages.length);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [modalImages]);
+
+  const skipToFinal = () =>
+    document.getElementById('final-design')?.scrollIntoView({ behavior: 'smooth' });
+
+  const TOOLS = [
+    { src: figmaLogo,     name: 'Figma'     },
+    { src: miroLogo,      name: 'Miro'      },
+    { src: canvaLogo,     name: 'Canva'     },
+    { src: rLogo,         name: 'R'         },
+    { src: chatgptLogo,   name: 'ChatGPT'   },
+    { src: photoshopLogo, name: 'Photoshop' },
+  ];
+
+  const TEAM = [
+    { name: 'Ashley Huang',       avatar: girlAvatar },
+    { name: 'Carrie Kim',         avatar: girlAvatar },
+    { name: 'Hrishika Jotwani',   avatar: girlAvatar },
+    { name: 'Shreayaa Srinivasan', avatar: girlAvatar },
+    { name: 'Sumit Gawali',       avatar: boyAvatar  },
+  ];
+
+  const sidebarSections = [
+    { id: 'context',          label: 'Context'           },
+    { id: 'overview',         label: 'Overview'          },
+    { id: 'problem',          label: 'Problem'           },
+    { id: 'solution-preview', label: 'Solution'          },
+    { id: 'impact',           label: 'Key Outputs'       },
+    { id: 'design-process',   label: 'Research Process'   },
+    { id: 'final-design',     label: 'Final Design'      },
+    { id: 'not-to-build',     label: 'Decisions Made'    },
+    { id: 'takeaways',        label: '3 Lessons Learned' },
+    { id: 'skills',           label: 'Skills Built'      },
+  ];
+
+  /* ── JSX ─────────────────────────────────────────────────────── */
   return (
-    <div className="app">
-      <style>
-        {`
-        @import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+    <div className="cs-root">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Fjalla+One&family=Roboto:wght@300;400;500;700;900&display=swap');
 
-        :root {
-          --rose-pompadour: #e27396;
-          --amaranth-pink: #ea9ab2;
-          --mimi-pink: #efcfe3;
-          --beige: #eaf2d7;
-          --light-blue: #b3dee2;
-          --deep-rose: #c55577;
-          --darker-rose: #a73e5a;
-          --text-primary: #2d2d2d;
-          --text-secondary: #4a4a4a;
-          --yellow-bg: #F4E84C;
-          --case-study-bg: #b3b7ee;
+        /* ── RESET & ROOT ──────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html {
+          min-height: 100%;
+          background: linear-gradient(160deg, #eaf2d7 0%, #efcfe3 35%, #b3dee2 70%, #ea9ab2 100%);
         }
-
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
         body {
-          font-family: 'Roboto', sans-serif;
-          background: linear-gradient(135deg, var(--beige) 0%, var(--mimi-pink) 30%, var(--light-blue) 70%, var(--amaranth-pink) 100%);
+          min-height: 100%;
+        }
+
+        .cs-root {
           min-height: 100vh;
-          color: var(--text-primary);
+          color: #2d2d2d;
+          font-family: 'DM Sans', sans-serif;
+          overflow-x: clip;
+        }
+
+        /* ── HERO ──────────────────────────────────────────────── */
+        .cs-hero {
+          width: 100%;
+          padding: 3.5rem 0 2rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background: transparent;
+          overflow: hidden;
+          gap: 0.75rem;
+        }
+        .cs-hero-img {
+          width: 100%;
+          max-width: 500px;
+          height: auto;
+          object-fit: contain;
+          display: block;
+          opacity: 0;
+          animation: heroFade 1.2s ease-out .2s forwards;
+        }
+        .cs-hero-subtitle {
+          font-family: 'Fjalla One', sans-serif;
+          font-size: .68rem;
+          text-transform: uppercase;
+          letter-spacing: .22em;
+          color: #111;
+          opacity: 0;
+          animation: heroFade 1.2s ease-out .4s forwards;
+        }
+        @keyframes heroFade { to { opacity: 1; } }
+
+        /* ── CONTENT COLUMN ────────────────────────────────────── */
+        .cs-content {
+          max-width: 1120px;
+          margin: 0 auto;
+          padding: 0;
+        }
+
+        .cs-page-layout {
+          max-width: 1500px;
+          margin: 0 auto;
+          padding: 0 2rem;
+          display: grid;
+          grid-template-columns: 200px minmax(0, 1fr);
+          gap: 2.5rem;
+          align-items: start;
+        }
+        .cs-sidebar {
+          position: sticky;
+          top: 7.5rem;
+          align-self: start;
+          width: 200px;
+          padding-top: 4.5rem;
+        }
+        .cs-sidebar-nav {
+          display: flex;
+          flex-direction: column;
+          gap: .95rem;
+        }
+        .cs-sidebar-link {
+          text-decoration: none;
+          color: #aaa;
+          font-family: 'DM Sans', sans-serif;
+          font-size: .75rem;
+          letter-spacing: .1em;
+          text-transform: uppercase;
+          transition: color .2s ease, padding-left .2s ease;
+          position: relative;
+          padding-left: 1rem;
+          display: block;
+          line-height: 1.4;
+        }
+        .cs-sidebar-link::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 2px;
+          height: 100%;
+          border-radius: 2px;
+          background: transparent;
+          transition: background .2s ease;
+        }
+        .cs-sidebar-link:hover {
+          color: #e27396;
+          padding-left: 1.3rem;
+        }
+        .cs-sidebar-link:hover::before {
+          background: rgba(226, 115, 150, .35);
+        }
+        .cs-sidebar-link.active {
+          color: #e27396;
+          font-weight: 700;
+          padding-left: 1.3rem;
+        }
+        .cs-sidebar-link.active::before {
+          background: #e27396;
+        }
+
+        /* ── INTRO ─────────────────────────────────────────────── */
+        .cs-intro { padding: 4.5rem 0 3rem; }
+
+        .cs-logo-bar {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+          margin-bottom: 2rem;
+          justify-content: flex-start;
+        }
+        .cs-cornell-badge {
+          background: #b31b1b;
+          color: white;
+          font-family: 'Fjalla One', sans-serif;
+          font-size: .82rem;
+          padding: .35rem .9rem;
+          border-radius: 4px;
+          letter-spacing: .04em;
+        }
+        .cs-logo-sep { font-size: 1.3rem; color: #ccc; font-weight: 300; }
+
+        .cs-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: .5rem;
+          margin-bottom: 2.5rem;
+        }
+        .cs-tag {
+          border: 1.5px solid rgba(45,45,45,.22);
+          border-radius: 50px;
+          padding: .3rem 1rem;
+          font-size: .83rem;
+          color: #555;
+          background: rgba(255,255,255,.5);
+          font-family: 'DM Sans', sans-serif;
+        }
+
+        .cs-sublabel {
+          font-family: 'Fjalla One', sans-serif;
+          font-size: .68rem;
+          text-transform: uppercase;
+          letter-spacing: .22em;
+          color: #111;
+          margin-bottom: .55rem;
+        }
+
+        .cs-oneliner {
+          font-family: ui-serif, Georgia, serif;
+          font-size: 22.4px;
+          line-height: 1.45;
+          color: #e27396;
+          margin-bottom: 3rem;
+          max-width: none;
+          display: block;
+        }
+        .cs-solution-oneliner {
+          font-family: ui-serif, Georgia, serif;
+          font-size: 22.4px;
+          line-height: 1.45;
+          color: #e27396;
+          margin: 1.25rem 0 1.5rem;
+          max-width: none;
+          display: block;
+        }
+
+        /* metadata grid */
+        .cs-meta {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          margin: 3.5rem auto 2.5rem auto;
+          max-width: 1200px;
+          background: transparent;
+          border: none;
+        }
+        .cs-meta-row {
+          display: grid;
+          gap: 0;
+          width: 100%;
+        }
+        .cs-meta-row-top {
+          grid-template-columns: repeat(3, 1fr);
+          border: 1px solid rgba(226, 115, 150, 0.35);
+          border-bottom: 1px solid rgba(226, 115, 150, 0.35);
+          border-radius: 6px 6px 0 0;
+          overflow: hidden;
+        }
+        .cs-meta-row-mid {
+          grid-template-columns: 1fr;
+          border-left: 1px solid rgba(226, 115, 150, 0.35);
+          border-right: 1px solid rgba(226, 115, 150, 0.35);
+          border-bottom: 1px solid rgba(226, 115, 150, 0.35);
+          align-items: center;
+        }
+        .cs-meta-row-tools {
+          grid-template-columns: 1fr;
+          border-left: 1px solid rgba(226, 115, 150, 0.35);
+          border-right: 1px solid rgba(226, 115, 150, 0.35);
+          border-bottom: 1px solid rgba(226, 115, 150, 0.35);
+          border-radius: 0 0 6px 6px;
+        }
+        .cs-meta-cell {
+          padding: 1.25rem 1.5rem;
+          border-right: 1px solid rgba(226, 115, 150, 0.25);
+          text-align: center;
+          min-height: 100%;
+        }
+        .cs-meta-row-top .cs-meta-cell:last-child,
+        .cs-meta-row-mid .cs-meta-cell:last-child,
+        .cs-meta-row-tools .cs-meta-cell {
+          border-right: none;
+        }
+        .cs-meta-row-mid .cs-meta-cell {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+        .cs-meta-team {
+          align-items: center;
+        }
+        .cs-meta-team-avatars {
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          gap: 1.5rem;
+          flex-wrap: wrap;
+          margin-top: .35rem;
+        }
+        .cs-meta-team-role {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: .5rem;
+          width: 90px;
+        }
+        .cs-team-avatar {
+          width: 48px;
+          height: 48px;
+          object-fit: contain;
+        }
+        .cs-team-role-label {
+          font-family: 'DM Sans', sans-serif;
+          font-size: .8rem;
+          font-weight: 600;
+          color: #2d2d2d;
+          line-height: 1.25;
+          text-align: center;
+        }
+
+        .cs-meta-key {
+          font-size: .7rem;
+          text-transform: uppercase;
+          letter-spacing: .18em;
+          color: #8b8b8b;
+          margin-bottom: .6rem;
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 700;
+        }
+        .cs-meta-val {
+          font-size: 1.05rem;
+          font-weight: 600;
+          color: #2d2d2d;
+          line-height: 1.4;
+          font-family: 'DM Sans', sans-serif;
+        }
+        .cs-tool-logos {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+          align-items: center;
+          margin-top: .35rem;
+          justify-content: center;
+        }
+        .cs-tool-logo {
+          height: 30px;
+          width: auto;
+          object-fit: contain;
+          filter: grayscale(15%);
+          transition: filter .2s, transform .2s;
+        }
+        .cs-tool-logo:hover { filter: grayscale(0%); transform: scale(1.12); }
+        .cs-tool-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.4rem;
+        }
+        .cs-tool-name {
+          font-size: 0.7rem;
+          color: #555;
+          text-align: center;
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 500;
+          margin: 0;
+          line-height: 1.2;
+          max-width: 60px;
+        }
+
+        /* ── SECTION ANATOMY ───────────────────────────────────── */
+        .cs-section {
+          padding: 4.5rem 0;
+          border-top: 1px solid rgba(0,0,0,.08);
+        }
+        .cs-section-label {
+          font-family: 'Fjalla One', sans-serif;
+          font-size: .68rem;
+          text-transform: uppercase;
+          letter-spacing: .22em;
+          color: #111;
+          margin-bottom: 1.75rem;
+        }
+
+        .cs-body {
+          font-size: 1rem;
+          line-height: 1.85;
+          color: #444;
+          font-family: 'DM Sans', sans-serif;
+        }
+        .cs-body p { margin-bottom: 1.2rem; }
+        .cs-body p:last-child { margin-bottom: 0; }
+        .cs-bold-intro {
+          font-family: ui-serif, Georgia, serif;
+          font-size: 1.4rem;
+          line-height: 1.5;
+          color: #e27396;
+          margin-bottom: 1.5rem;
+        }
+        .cs-highlight {
+          background: rgba(198,236,201,0.55);
+          padding: 0.12rem 0.5rem;
+          border-radius: 9999px;
+          display: inline-block;
+        }
+        .cs-placeholder {
+          background: rgba(255,255,255,.4);
+          border: 2px dashed rgba(0,0,0,.1);
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #bbb;
+          font-size: .85rem;
+          font-style: italic;
+        }
+
+        /* ── STACKING iMESSAGE CARDS ──────────────────────────── */
+        /* base styles live in components/caseStudy.css; wider bubble
+           here because the research questions are longer */
+        .psc-bubble { max-width: 460px; }
+
+        /* ── SOLUTION VIDEO ────────────────────────────────────── */
+        .cs-video-wrap {
+          border-radius: 14px;
+          overflow: hidden;
+          box-shadow: 0 8px 40px rgba(0,0,0,.14);
+          margin: 2rem 0 1.5rem;
+        }
+        .cs-video-wrap iframe {
+          display: block;
+          width: 100%;
+          aspect-ratio: 16/9;
+          border: none;
+        }
+        .cs-skip-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: .75rem;
+          background: transparent;
+          border: 1.5px solid #e27396;
+          color: #e27396;
+          border-radius: 9999px;
+          padding: .6rem 1.25rem;
+          font-size: .95rem;
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all .18s ease;
+          margin: 1.25rem auto 0 auto;
+        }
+        .cs-skip-btn:hover { background: #e27396; color: white; }
+        .cs-skip-icon {
+          width: 34px;
+          height: 34px;
+          border-radius: 9999px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(226,115,150,0.12);
+          color: #e27396;
+          flex-shrink: 0;
+        }
+        .cs-skip-icon svg { width: 16px; height: 16px; }
+        .cs-skip-label { display: inline-block; font-family: 'DM Sans', sans-serif; font-weight:700; }
+
+        /* ── IMPACT ────────────────────────────────────────────── */
+        .impact-row {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.25rem;
+          margin: 2.5rem 0 2rem;
+        }
+        .impact-note {
+          font-size: 1.1rem;
+          color: #e27396;
+          font-style: normal;
+          font-family: ui-serif, Georgia, serif;
+          font-weight: 500;
+          margin-top: 1.5rem;
           line-height: 1.6;
-          overflow-x: hidden;
+          border-left: 4px solid #000;
+          padding-left: 1rem;
+          margin-left: 0.5rem;
         }
 
-        h1, h2, h3, h4, h5, h6 {
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+        /* ── DESIGN PROCESS ────────────────────────────────────── */
+        .process-intro {
+          font-family: ui-serif, Georgia, serif;
+          font-size: 22.4px;
+          color: #e27396;
+          font-style: normal;
+          font-weight: 500;
+          line-height: 1.5;
+          margin-bottom: 2.5rem;
         }
-
-        .app {
-          min-height: 100vh;
-          background: linear-gradient(135deg, var(--beige) 0%, var(--mimi-pink) 30%, var(--light-blue) 70%, var(--amaranth-pink) 100%);
+        .process-timeline { margin-top: 0; }
+        .process-step {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
           position: relative;
         }
+        .ps-content {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+        .ps-num {
+          font-family: ui-serif, Georgia, serif;
+          font-size: .8rem;
+          font-weight: 600;
+          color: #e27396;
+          margin-bottom: .35rem;
+          letter-spacing: .04em;
+        }
+        .ps-title {
+          font-family: ui-serif, Georgia, serif;
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          margin-bottom: .75rem;
+        }
+        .ps-text {
+          font-size: .95rem;
+          color: #555;
+          line-height: 1.78;
+          font-family: 'DM Sans', sans-serif;
+        }
+        .ps-img {
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: 0 4px 20px rgba(0,0,0,.1);
+        }
+        .ps-img img { width: 100%; height: auto; display: block; }
+        .process-timeline > .process-step:nth-child(3) .ps-img,
+        .process-timeline > .process-step:nth-child(7) .ps-img,
+        .process-timeline > .process-step:nth-child(13) .ps-img {
+          max-width: 85%;
+        }
 
-        /* Animated Background */
-        .app::before {
+        /* sub-content inside a process step */
+        .ps-list-label {
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 700;
+          font-size: .95rem;
+          color: #1a1a1a;
+          margin-top: .5rem;
+        }
+        .ps-sublist {
+          list-style: none;
+          display: flex;
+          flex-direction: column;
+          gap: .55rem;
+          margin-top: .25rem;
+        }
+        .ps-sublist li {
+          font-size: .92rem;
+          color: #555;
+          line-height: 1.7;
+          font-family: 'DM Sans', sans-serif;
+          padding-left: 1.1rem;
+          position: relative;
+        }
+        .ps-sublist li::before {
           content: '';
+          position: absolute;
+          left: 0;
+          top: .62em;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #e27396;
+        }
+
+        /* video placeholder — subtle pink tint + play icon */
+        .cs-video-ph {
+          background: rgba(226,115,150,0.05) !important;
+          border-color: rgba(226,115,150,0.25) !important;
+          flex-direction: column;
+          gap: 0.5rem;
+          border-radius: 10px;
+        }
+
+        /* ── FINAL DESIGN ──────────────────────────────────────── */
+        .fd-empty-note {
+          font-family: ui-serif, Georgia, serif;
+          font-size: 1.15rem;
+          color: #999;
+          font-style: italic;
+          line-height: 1.6;
+          margin-top: 1rem;
+        }
+        .fd-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+          margin-top: 2rem;
+        }
+        .fd-item {
+          width: 100%;
+        }
+        .fd-item img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+
+        /* ── NOT TO BUILD ──────────────────────────────────────── */
+        .ntb-list { display: flex; flex-direction: column; gap: 2.25rem; margin-top: 1rem; }
+        .ntb-item-title {
+          font-family: ui-serif, Georgia, serif;
+          font-weight: 700;
+          font-size: 1.2rem;
+          color: #e27396;
+          margin-bottom: .65rem;
+        }
+        .ntb-desc {
+          font-size: 1rem;
+          color: #444;
+          line-height: 1.85;
+          font-family: 'DM Sans', sans-serif;
+        }
+
+        /* ── LEARNINGS ─────────────────────────────────────────── */
+        .learnings-list {
+          margin-top: 2rem;
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+          font-family: 'DM Sans', sans-serif;
+        }
+        .learning-item {
+          display: flex;
+          gap: 1.75rem;
+          align-items: center;
+        }
+        .learning-n {
+          font-size: 4rem;
+          font-weight: 900;
+          color: rgba(226,115,150,.4);
+          line-height: .85;
+          font-family: 'Fjalla One', sans-serif;
+          flex-shrink: 0;
+          width: 52px;
+          text-align: right;
+        }
+        .learning-text {
+          font-size: 1rem;
+          color: #444;
+          line-height: 1.78;
+          padding-top: 0;
+          flex: 1;
+          font-family: 'DM Sans', sans-serif;
+        }
+
+        /* ── PROBLEM ─────────────────────────────────────────── */
+        .problem-lead { margin-bottom: 1rem; }
+
+        /* ── SKILLS ────────────────────────────────────────────── */
+        .skills-pills {
+          display: flex;
+          flex-wrap: wrap;
+          gap: .75rem;
+          margin-top: 1.5rem;
+        }
+        .skill-pill {
+          background: rgba(255,255,255,.75);
+          border: 1.5px solid rgba(226,115,150,.45);
+          color: #c55577;
+          border-radius: 50px;
+          padding: .42rem 1.2rem;
+          font-size: .87rem;
+          font-weight: 500;
+          font-family: 'DM Sans', sans-serif;
+          transition: background .2s, color .2s;
+        }
+        .skill-pill:hover { background: #e27396; color: white; }
+
+        /* ── THE PEOPLE BEHIND ALL THIS ────────────────────────── */
+        .people-img-wrap {
+          width: 100%;
+          max-width: 900px;
+          margin: 2rem auto;
+        }
+        .people-img-wrap img {
+          width: 100%;
+          height: auto;
+          border-radius: 14px;
+          box-shadow: 0 8px 40px rgba(0,0,0,.14);
+          display: block;
+        }
+
+        /* ── THE END ───────────────────────────────────────────── */
+        .cs-the-end {
+          text-align: center;
+          padding: 5rem 2rem 3.5rem;
+        }
+        .cs-the-end-text {
+          font-family: 'Fjalla One', sans-serif;
+          font-size: 5rem;
+          color: #2d2d2d;
+          text-transform: uppercase;
+          letter-spacing: .08em;
+          line-height: 1;
+        }
+
+        /* ── SEE NEXT ──────────────────────────────────────────── */
+        .see-next {
+          padding: 4rem 2rem 2rem;
+          max-width: 1120px;
+          margin: 0 auto;
+        }
+        .see-next-label {
+          font-family: 'Fjalla One', sans-serif;
+          font-size: .68rem;
+          text-transform: uppercase;
+          letter-spacing: .22em;
+          color: #111;
+          margin-bottom: 2rem;
+        }
+        .see-next-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+        }
+        .see-next-card {
+          background: rgba(255,255,255,.6);
+          border-radius: 14px;
+          overflow: hidden;
+          box-shadow: 0 4px 24px rgba(0,0,0,.08);
+          text-decoration: none;
+          color: inherit;
+          transition: transform .25s ease, box-shadow .25s ease;
+          display: flex;
+          flex-direction: column;
+        }
+        .see-next-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 10px 36px rgba(0,0,0,.13);
+        }
+        .see-next-img {
+          width: 100%;
+          aspect-ratio: 16/10;
+          object-fit: contain;
+          display: block;
+          background: rgba(255,255,255,.6);
+        }
+        .see-next-body {
+          padding: 1.4rem 1.6rem 1.8rem;
+        }
+        .see-next-title {
+          font-family: ui-serif, Georgia, serif;
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          margin-bottom: .6rem;
+        }
+        .see-next-desc {
+          font-family: 'DM Sans', sans-serif;
+          font-size: .9rem;
+          color: #555;
+          line-height: 1.7;
+        }
+        @media (max-width: 768px) {
+          .see-next-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── IMAGE MODAL ───────────────────────────────────────── */
+        .image-modal-overlay {
           position: fixed;
           top: 0;
           left: 0;
-          width: 100%;
-          height: 100%;
-          background: 
-            radial-gradient(circle at 20% 20%, rgba(226, 115, 150, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(179, 222, 226, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 40% 60%, rgba(239, 207, 227, 0.08) 0%, transparent 50%);
-          pointer-events: none;
-          z-index: -1;
-          animation: floatBackground 25s ease-in-out infinite;
-        }
-
-        @keyframes floatBackground {
-          0%, 100% { 
-            transform: translateY(0px) rotate(0deg) scale(1);
-          }
-          33% { 
-            transform: translateY(-20px) rotate(1deg) scale(1.02);
-          }
-          66% { 
-            transform: translateY(-30px) rotate(-1deg) scale(0.98);
-          }
-        }
-
-        .content-container {
-          max-width: 1400px;
-          margin: 0 auto;
-          padding: 0 2rem;
-        }
-
-        /* Header */
-        .header {
-          background: rgba(255, 255, 255, 0.3);
-          position: relative;
-          z-index: 100;
-          border-bottom: 1px solid rgba(226, 115, 150, 0.2);
-          transition: all 0.3s ease;
-          opacity: 0;
-          transform: translateY(-20px);
-          animation: slideInHeader 1s ease-out 0.2s forwards;
-        }
-
-        @keyframes slideInHeader {
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .header-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1.5rem 0;
-        }
-
-        .custom-logo {
-          height: 3.5rem;
-          width: auto;
-          object-fit: contain;
-          display: inline-block;
-          transition: transform 0.3s ease, filter 0.3s ease;
-          vertical-align: middle;
-        }
-
-        .custom-logo:hover {
-          transform: scale(1.15);
-          filter: drop-shadow(0 0 6px rgba(226, 115, 150, 0.4));
-        }
-
-        .nav-links {
-          display: flex;
-          gap: 2.5rem;
-          font-family: 'Fjalla One', sans-serif;
-        }
-
-        .nav-links a {
-          text-decoration: none;
-          color: var(--text-primary);
-          font-weight: 400;
-          font-size: 1rem;
-          transition: all 0.3s ease;
-          position: relative;
-          padding: 0.5rem 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.85);
           display: flex;
           align-items: center;
-          gap: 0.3rem;
-        }
-
-        .nav-links a:hover {
-          transform: scale(1.05);
-          color: var(--rose-pompadour);
-        }
-
-        .nav-links a:after {
-          content: '';
-          position: absolute;
-          width: 0;
-          height: 2px;
-          bottom: -2px;
-          left: 0;
-          background: var(--rose-pompadour);
-          transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .nav-links a:hover:after {
-          width: 100%;
-        }
-
-        /* Main Layout */
-        .case-study-layout {
-          padding: 4rem 0;
-        }
-
-        /* Mockup Section - No Container */
-        .mockup-section {
-          text-align: center;
-          margin-bottom: 4rem;
-          opacity: 0;
-          animation: slideInUp 1s ease-out 0.4s forwards;
-        }
-
-        @keyframes slideInUp {
-          from {
-            opacity: 0;
-            transform: translateY(50px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .mockup-image {
-          width: auto;
-          max-width: 1500px;
-          height: auto;
-          max-height: 1100px;
-          object-fit: contain;
-          object-position: center;
-          transition: all 0.4s ease;
-        }
-
-        .mockup-image:hover {
-          transform: scale(1.02);
-        }
-
-        /* Project Metadata */
-        .project-metadata {
-          display: flex;
           justify-content: center;
-          gap: 6rem;
-          margin-bottom: 2rem;
-          opacity: 0;
-          animation: slideInUp 1s ease-out 0.6s forwards;
-        }
-
-        .metadata-item {
-          text-align: center;
-        }
-
-        .metadata-label {
-          font-size: 1rem;
-          color: var(--text-secondary);
-          font-weight: 500;
-          margin-bottom: 0.8rem;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          font-family: 'Fjalla One', sans-serif;
-        }
-
-        .metadata-value {
-          font-size: 1.3rem;
-          color: var(--text-primary);
-          font-weight: 600;
-        }
-
-        /* Cascading Cards Section - HORIZONTAL STACKING */
-        .cascade-section {
-          display: flex;
-          justify-content: center;
-          margin-bottom: 8rem;
-          margin-top: 4rem; /* Add space above to push cards down */
-          opacity: 0;
-          animation: slideInUp 1s ease-out 0.8s forwards;
-          width: 100%;
-          overflow-x: auto; /* Allow horizontal scroll if needed */
-          padding: 0 20px; /* Add padding to prevent edge cutoff */
-        }
-
-        .cascade-container {
-          position: relative;
-          width: 1400px; /* Further increased to ensure no cutoff */
-          height: 600px; /* Increased height for taller cards */
-          margin: 0 auto; /* Center the container */
-        }
-
-        /* Section cards - stacked horizontally to the right - BEHIND yellow card */
-        .cascade-card {
-          position: absolute;
-          width: 380px; /* Updated to requested size */
-          height: 320px; /* Updated to requested size */
-          background: #b3dee2;;
-          backdrop-filter: blur(25px);
-          border-radius: 12px;
-          border: 3px solid #2d2d2d;
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+          z-index: 1000;
+          animation: fadeIn 0.3s ease;
           cursor: pointer;
-          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .image-modal-content {
+          position: relative;
+          max-width: 90vw;
+          max-height: 90vh;
+          background: white;
+          border-radius: 12px;
+          padding: 1rem;
+          box-shadow: 0 10px 60px rgba(0, 0, 0, 0.3);
+          cursor: default;
+        }
+        .image-modal-content img {
+          width: 100%;
+          height: auto;
+          max-width: 100%;
+          max-height: calc(90vh - 2rem);
+          display: block;
+        }
+        .image-modal-close {
+          position: absolute;
+          top: -40px;
+          right: 0;
+          background: none;
+          border: none;
+          color: white;
+          font-size: 32px;
+          cursor: pointer;
+          padding: 0;
+          width: 40px;
+          height: 40px;
           display: flex;
-          align-items: flex-start; /* Align text to top */
+          align-items: center;
           justify-content: center;
-          padding-top: 10px; /* Reduced from 25px to move text closer to top */
-          opacity: 0;
-          animation: cascadeIn 0.6s ease-out forwards;
+          transition: transform 0.2s;
         }
-
-        .cascade-card h3 {
-          font-size: 1.3rem; /* Increased for better consistency */
-          font-weight: 600;
-          color: var(--text-primary);
-          text-align: center;
-          line-height: 1.3;
-          margin: 0;
-          padding: 0 15px; /* Add some horizontal padding */
+        .image-modal-close:hover {
+          transform: scale(1.2);
         }
-
-        /* ADD THE MISSING ANIMATION */
-        @keyframes cascadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-
-        .cascade-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-          z-index: 11; /* Even higher on hover */
-        }
-
-        /* Horizontal stacking - adjusted for larger card sizes */
-        .cascade-card:nth-child(1) { /* Overview */
-          bottom: 0px; /* Adjusted for taller cards */
-          left: 200px; /* More spacing for wider cards */
-          z-index: 6;
-          animation-delay: 1s;
-        }
-
-        .cascade-card:nth-child(1) h3 { /* Ensure first card font size is consistent */
-          font-size: 1.3rem;
-          font-weight: 600;
-        }
-
-        .cascade-card:nth-child(2) { /* My Role */
-          bottom: 50px;
-          left: 300px;
-          z-index: 5;
-          animation-delay: 1.2s;
-        }
-
-        .cascade-card:nth-child(3) { /* Understanding Our */
-          bottom: 100px;
-          left: 400px;
-          z-index: 4;
-          animation-delay: 1.4s;
-        }
-
-        .cascade-card:nth-child(4) { /* Design Process */
-          bottom: 150px;
-          left: 500px;
-          z-index: 3;
-          animation-delay: 1.6s;
-        }
-
-        .cascade-card:nth-child(5) { /* Final Design Solution */
-          bottom: 200px;
-          left: 600px;
+        .image-modal-nav {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 46px;
+          height: 46px;
+          border-radius: 9999px;
+          border: none;
+          background: rgba(255,255,255,.9);
+          color: #2d2d2d;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 4px 16px rgba(0,0,0,.25);
+          transition: background .2s, transform .2s;
           z-index: 2;
-          animation-delay: 1.8s;
         }
-
-        .cascade-card:nth-child(6) { /* What Did I Learn */
-          bottom:250px;
-          left: 700px;
-          z-index: 1;
-          animation-delay: 2s;
-        }
-
-
-        /* Content Sections - SIMPLIFIED HEADERS */
-        .content-sections {
-          max-width: 1000px;
-          margin: 0 auto;
-          padding: 0 2rem;
-        }
-
-        .content-section {
-          margin-bottom: 2rem;
-          padding: 1rem 0;
-        }
-
-        .section-header {
-          margin-bottom: 0.8rem;
-        }
-
-        .section-title {
-          font-size: 1.8rem;
-          font-weight: 700;
-          color: var(--text-primary);
-          margin-bottom: 0.3rem;
-          line-height: 1.2;
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-        }
-
-        .section-content {
-          font-size: 1.1rem;
-          color: var(--text-secondary);
-          line-height: 1.7;
-        }
-
-        /* Extra rules for PDF-style formatting */
-        .section-content p {
-          margin-bottom: 1rem;
-        }
-        .section-content ul,
-        .section-content ol {
-          margin: 1rem 0 1rem 2rem;
-          padding-left: 1rem;
-        }
-        .section-content li {
-          margin-bottom: 0.5rem;
-          line-height: 1.6;
-        }
-        .section-content em {
-          display: block;
-          margin: 1.5rem 0;
-          color: #888;
-          font-style: italic;
-          text-align: center;
-        }
-        
-        /* Direct image styling for build process images */
-        .section-content img {
-          display: block;
-          max-width: 90%;
-          height: auto;
-          margin: 2rem auto 0.5rem auto;
-          border-radius: 12px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          transition: all 0.3s ease;
-          cursor: pointer;
-        }
-
-        /* Video styling */
-        .section-content video {
-          display: block;
-          max-width: 90%;
-          height: auto;
-          margin: 2rem auto 0.5rem auto;
-          border-radius: 12px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          transition: all 0.3s ease;
-        }
-
-        /* Hover animation for images */
-        .section-content img:hover {
-          transform: scale(1.05);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-          border-radius: 16px;
-        }
-
-        /* Hover animation for videos */
-        .section-content video:hover {
-          transform: scale(1.02);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-          border-radius: 16px;
-        }
-
-        /* YouTube video container styling */
-        .video-container {
-          position: relative;
-          width: 100%;
-          max-width: 800px;
-          margin: 2rem auto;
-          padding-bottom: 56.25%; /* 16:9 aspect ratio */
-          height: 0;
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          transition: all 0.3s ease;
-        }
-
-        .video-container:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .video-container iframe {
+        .image-modal-nav svg { width: 22px; height: 22px; }
+        .image-modal-nav.prev { left: -23px; }
+        .image-modal-nav.next { right: -23px; }
+        .image-modal-nav:hover { background: #e27396; color: white; transform: translateY(-50%) scale(1.08); }
+        .image-modal-counter {
           position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          border: none;
+          bottom: -34px;
+          left: 50%;
+          transform: translateX(-50%);
+          color: white;
+          font-family: 'DM Sans', sans-serif;
+          font-size: .85rem;
+          letter-spacing: .05em;
         }
-
-        /* Cultural probe kit gallery styling - Custom asymmetric layout */
-        .probe-kit-gallery {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1.5rem;
-          margin: 2rem 0;
-          max-width: 800px;
-          margin-left: auto;
-          margin-right: auto;
+        @media (max-width: 600px) {
+          .image-modal-nav.prev { left: 6px; }
+          .image-modal-nav.next { right: 6px; }
         }
-
-        .probe-kit-gallery img {
-          display: block;
-          width: 100%;
-          height: auto;
-          margin: 0;
-          border-radius: 8px;
-          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-          transition: all 0.3s ease;
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .clickable-image {
           cursor: pointer;
+          transition: opacity 0.2s;
         }
-
-        .probe-kit-gallery img:hover {
-          transform: scale(1.03);
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-          border-radius: 12px;
+        .clickable-image:hover {
+          opacity: 0.85;
         }
-
-        /* Specific positioning for each item - no height changes */
-        .probe-kit-gallery img:nth-child(1) {
-        }
-
-        .probe-kit-gallery img:nth-child(2) {
-        }
-
-        .probe-kit-gallery img:nth-child(3) {
-        }
-
-        .probe-kit-gallery img:nth-child(4) {
-        }
-
-        .probe-kit-gallery img:nth-child(5) {
-          grid-column: 1 / -1;
-          justify-self: center;
-          max-width: 50%;
-        }
-
-        /* Mobile responsive for probe kit gallery */
-        @media (max-width: 768px) {
-          .probe-kit-gallery {
-            grid-template-columns: 1fr;
-            grid-template-areas:
-              "item1"
-              "item2"
-              "item3"
-              "item4"
-              "item5";
-            gap: 1rem;
-            max-width: 90%;
-          }
-        }
-
-        /* Scroll animation classes */
-        .fade-in-up {
-          opacity: 0;
-          transform: translateY(30px);
-          transition: all 0.6s ease;
-        }
-
-        .fade-in-up.visible {
-          opacity: 1;
-          transform: translateY(0);
-        }
-
-        .fade-in-left {
-          opacity: 0;
-          transform: translateX(-30px);
-          transition: all 0.8s ease;
-        }
-
-        .fade-in-left.visible {
-          opacity: 1;
-          transform: translateX(0);
-        }
-
-        .fade-in-right {
-          opacity: 0;
-          transform: translateX(30px);
-          transition: all 0.8s ease;
-        }
-
-        .fade-in-right.visible {
-          opacity: 1;
-          transform: translateX(0);
-        }
-
-        /* Image captions */
-        .image-caption {
+        .image-subtext {
+          font-size: 0.75rem;
+          color: #999;
           text-align: center;
+          margin-top: 0.5rem;
           font-style: italic;
-          color: var(--text-secondary);
-          font-size: 0.9rem;
-          margin: 0.5rem auto 2rem auto;
-          max-width: 80%;
-        }
-        
-        .section-content h4, .section-content h5, .section-content h6 {
-          font-weight: 600;
-          margin-top: 1.5rem;
-          margin-bottom: 0.5rem;
-          color: var(--text-primary);
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-        }
-        
-        /* Main section headings (01, 02, 03) */
-        .section-content h4 {
-          font-size: 1.3rem;
-          margin-left: 0;
-          font-weight: 700;
-          color: var(--text-primary);
-          margin-top: 2rem;
-          margin-bottom: 1rem;
-        }
-        
-        /* Sub-section headings (01.1, 01.2, 02.1, etc.) */
-        .section-content h5 {
-          font-size: 1.1rem;
-          margin-left: 1.5rem;
-          font-weight: 600;
-          color: var(--text-primary);
-          margin-top: 1.2rem;
-          margin-bottom: 0.7rem;
-        }
-        
-        /* Sub-sub-section headings (02.4.1, etc.) */
-        .section-content h6 {
-          font-size: 1rem;
-          margin-left: 3rem;
-          font-weight: 600;
-          color: var(--text-secondary);
-          margin-top: 1rem;
-          margin-bottom: 0.5rem;
+          font-family: 'DM Sans', sans-serif;
         }
 
-        /* Content indentation following sub-headings */
-        .section-content h5 + p,
-        .section-content h5 + ul,
-        .section-content h5 + ol {
-          margin-left: 1.5rem;
-        }
+        /* ── SCROLL ANIMATIONS ─────────────────────────────────── */
+        .fade-up    { opacity: 0; transform: translateY(24px);  transition: opacity .65s ease, transform .65s ease; }
+        .fade-left  { opacity: 0; transform: translateX(-36px); transition: opacity .65s ease, transform .65s ease; }
+        .fade-right { opacity: 0; transform: translateX(36px);  transition: opacity .65s ease, transform .65s ease; }
+        .fade-up.visible,
+        .fade-left.visible,
+        .fade-right.visible { opacity: 1; transform: none; }
 
-        .section-content h6 + p,
-        .section-content h6 + ul,
-        .section-content h6 + ol {
-          margin-left: 3rem;
-        }
-
-        /* Footer */
-        .footer {
-          text-align: center;
-          padding: 3rem 0;
-          background: #ea9ab2;
-          position: relative;
-          overflow: hidden;
-          margin-top: 4rem;
-        }
-
-        .footer-content {
-          max-width: 650px;
-          margin: 0 auto;
-          padding: 0 2rem;
-        }
-
-        .footer-message {
-          margin-bottom: 2rem;
-        }
-
-        .footer-message h3 {
-          font-size: 1.4rem;
-          font-weight: 600;
-          color: white;
-          margin: 0;
-        }
-
-        .footer-links {
-          display: flex;
-          justify-content: center;
-          gap: 2rem;
-          margin-bottom: 2rem;
-        }
-
-        .footer-links a {
-          padding: 8px;
-          transition: all 0.3s ease;
-          text-decoration: none;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .footer-links a:hover {
-          transform: translateY(-2px) scale(1.1);
-        }
-
-        .footer-icon {
-          width: 28px;
-          height: 28px;
-          fill: white;
-          color: white;
-          transition: all 0.3s ease;
-        }
-
-        .footer-links a:hover .footer-icon {
-          filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.3));
-        }
-
-        .footer-copyright {
-          color: rgba(255, 255, 255, 0.9);
-          font-size: 0.9rem;
-          margin: 0;
-          font-weight: 400;
-        }
-
-        /* Navigation Buttons */
-        .nav-buttons {
-          display: flex;
-          justify-content: center;
-          gap: 2rem;
-          padding: 4rem 0;
-          max-width: 600px;
-          margin: 0 auto;
-        }
-
-        .nav-button {
-          padding: 1rem 2rem;
-          border: none;
-          border-radius: 50px;
-          font-weight: 500;
-          text-decoration: none;
-          transition: all 0.3s ease;
-          cursor: pointer;
-          font-size: 1rem;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-family: 'Roboto', sans-serif;
-          min-width: 180px;
-          justify-content: center;
-        }
-
-        .nav-button.primary {
-          background: var(--rose-pompadour);
-          color: white;
-          box-shadow: 0 4px 15px rgba(226, 115, 150, 0.3);
-        }
-
-        .nav-button.primary:hover {
-          background: var(--deep-rose);
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(226, 115, 150, 0.4);
-        }
-
-        .nav-button.secondary {
-          background: rgba(255, 255, 255, 0.9);
-          color: var(--text-primary);
-          border: 2px solid var(--rose-pompadour);
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-button.secondary:hover {
-          background: var(--rose-pompadour);
-          color: white;
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(226, 115, 150, 0.3);
-        }
-
+        /* ── RESPONSIVE ────────────────────────────────────────── */
         @media (max-width: 768px) {
-          .nav-buttons {
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            padding: 2rem 1rem;
-          }
+          .cs-page-layout   { grid-template-columns: 1fr; padding: 0 1.25rem; }
+          .cs-sidebar       { display: none; }
+          .cs-content       { max-width: none; }
+          .cs-oneliner       { font-size: 1.2rem; }
+          .impact-row        { grid-template-columns: repeat(2, 1fr); }
+          .process-step      { grid-template-columns: 1fr; gap: 1.5rem; }
+          .cs-the-end-text   { font-size: 3.5rem; }
         }
-
-        /* Responsive Design */
-        @media (max-width: 1600px) {
-          .cascade-container {
-            width: 1350px;
-            height: 550px;
-            margin: 0 auto;
-          }
+        @media (max-width: 1024px) {
+          .cs-page-layout   { grid-template-columns: 1fr; padding: 0 1.25rem; }
+          .cs-sidebar       { display: none; }
+          .cs-content       { max-width: none; }
+          .cs-bold-intro    { font-size: 1.15rem; }
+          .cs-oneliner      { font-size: 18px; }
+          .cs-solution-oneliner { font-size: 18px; }
+          .cs-meta-row-top  { grid-template-columns: 1fr; }
+          .cs-meta-row-mid  { grid-template-columns: 1fr; }
+          .cs-meta-row-tools{ grid-template-columns: 1fr; }
+          .impact-row       { grid-template-columns: repeat(3, 1fr); }
         }
-
-        @media (max-width: 1400px) {
-          .cascade-container {
-            width: 1300px;
-            height: 500px;
-            margin: 0 auto;
-          }
-
-          .cascade-card {
-            width: 320px;
-            height: 260px;
-          }
-
-          /* Adjust positioning for smaller container */
-          .cascade-card:nth-child(1) { left: 80px; bottom: 40px; }
-          .cascade-card:nth-child(2) { left: 180px; bottom: 80px; }
-          .cascade-card:nth-child(3) { left: 280px; bottom: 120px; }
-          .cascade-card:nth-child(4) { left: 380px; bottom: 160px; }
-          .cascade-card:nth-child(5) { left: 480px; bottom: 200px; }
-          .cascade-card:nth-child(6) { left: 580px; bottom: 240px; }
-        }
-
-        @media (max-width: 1200px) {
-          .cascade-container {
-            width: 1000px;
-            height: 400px;
-            margin: 0 auto;
-          }
-
-          .cascade-card {
-            width: 250px;
-            height: 200px;
-          }
-
-          /* Tighter positioning */
-          .cascade-card:nth-child(1) { left: 60px; bottom: 30px; }
-          .cascade-card:nth-child(2) { left: 140px; bottom: 60px; }
-          .cascade-card:nth-child(3) { left: 220px; bottom: 90px; }
-          .cascade-card:nth-child(4) { left: 300px; bottom: 120px; }
-          .cascade-card:nth-child(5) { left: 380px; bottom: 150px; }
-          .cascade-card:nth-child(6) { left: 460px; bottom: 180px; }
-        }
-
-        @media (max-width: 768px) {
-          .cascade-container {
-            width: 90%;
-            height: auto;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            gap: 1rem;
-          }
-
-          .cascade-card {
-            position: static !important;
-            width: 100%;
-            height: auto;
-            min-height: 120px;
-            padding: 1rem;
-            margin: 0;
-            transform: none !important;
-          }
-
-          .cascade-card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-          }
-
-          /* Reset all positioning for mobile stack layout */
-          .cascade-card:nth-child(1),
-          .cascade-card:nth-child(2),
-          .cascade-card:nth-child(3),
-          .cascade-card:nth-child(4),
-          .cascade-card:nth-child(5),
-          .cascade-card:nth-child(6) { 
-            left: auto !important;
-            bottom: auto !important;
-            right: auto !important;
-            top: auto !important;
-          }
-
-          }
-
-          .project-metadata {
-            flex-direction: row;
-            gap: 2rem;
-            align-items: center;
-          }
-        }
-
         @media (max-width: 480px) {
-          .cascade-card {
-            min-height: 100px;
-            padding: 0.8rem;
-          }
-
-          .cascade-card h3 {
-            font-size: 1rem;
-          }
-
-          .project-metadata {
-            gap: 1.5rem;
-          }
-
-          .metadata-label {
-            font-size: 0.8rem;
-          }
-
-          .metadata-value {
-            font-size: 0.9rem;
-          }
-        }          .mockup-image {
-            max-width: 90%;
-            max-height: 350px;
-          }
-
-          .section-title {
-            font-size: 1.5rem;
-          }
-
-          .nav-links {
-            gap: 1.5rem;
-          }
-
-          .nav-links a {
-            font-size: 0.9rem;
-          }
+          .cs-page-layout    { padding: 0 1rem; }
+          .impact-row        { grid-template-columns: 1fr 1fr; gap: .9rem; }
+          .impact-num        { font-size: 2.5rem; }
+          .cs-the-end-text   { font-size: 2.5rem; }
         }
+      `}</style>
 
-        @media (max-width: 480px) {
-          .content-container {
-            padding: 0 1rem;
-          }
+      {/* ── HEADER ───────────────────────────────────────────────── */}
+      <SiteHeader />
 
-          .cascade-container {
-            width: 95%;
-            height: 250px;
-            max-width: 400px;
-          }
+      {/* ── HERO ─────────────────────────────────────────────────── */}
+      <div className="cs-hero">
+        <img src={routesMockup} alt="Routes to Roots — Final Product" className="cs-hero-img" />
+        <p className="cs-hero-subtitle">Final Product View</p>
+      </div>
 
-          .cascade-card {
-            width: 140px;
-            height: 110px;
-            padding-top: 5px; /* Further reduced for smallest screens */
-          }
-
-          .cascade-card h3 {
-            font-size: 0.75rem;
-          }
-
-          /* Very tight mobile positioning */
-          .cascade-card:nth-child(1) { left: 30px; bottom: 15px; }
-          .cascade-card:nth-child(2) { left: 60px; bottom: 30px; }
-          .cascade-card:nth-child(3) { left: 90px; bottom: 45px; }
-          .cascade-card:nth-child(4) { left: 120px; bottom: 60px; }
-          .cascade-card:nth-child(5) { left: 150px; bottom: 75px; }
-          .cascade-card:nth-child(6) { left: 180px; bottom: 90px; }
-
-          .section-title {
-            font-size: 1.3rem;
-          }
-
-          .metadata-value {
-            font-size: 1.1rem;
-          }
-        }
-        `}
-      </style>
-
-      {/* HEADER */}
-      <header className="header">
-        <div className="content-container">
-          <div className="header-content">
-            <a href="/">
-              <div className="logo">
-                <img src={logo} alt="Shreayaa Srinivasan Logo" className="custom-logo" />
-              </div>
-            </a>
-            <nav className="nav-links">
-              <a href="/work">WORK</a>
-              <a href="/playground">PLAYGROUND</a>
-              <a href="/about">ABOUT</a>
-              <a href="https://drive.google.com/file/d/1nE7H77ctf1esubvyXuKoVVAPnDlRB8R0/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-                RESUME
+      {/* ── CONTENT ──────────────────────────────────────────────── */}
+      <div className="cs-page-layout">
+        <aside className="cs-sidebar" aria-label="Section navigation">
+          <nav className="cs-sidebar-nav">
+            {sidebarSections.map((section) => (
+              <a
+                key={section.id}
+                href={`#${section.id}`}
+                className={`cs-sidebar-link${activeSection === section.id ? ' active' : ''}`}
+                onClick={(event) => {
+                  event.preventDefault();
+                  document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+              >
+                {section.label}
               </a>
-            </nav>
+            ))}
+          </nav>
+        </aside>
+
+        <div className="cs-content">
+
+        {/* ── INTRO ──────────────────────────────────────────────── */}
+        <div className="cs-intro" id="context">
+
+          {/* Tag pills */}
+          <div className="cs-tags fade-up">
+            {['UX Research', 'Interaction Design', 'Cultural Probes', 'Auto Ethnography', 'Diary Studies'].map(t => (
+              <span key={t} className="cs-tag">{t}</span>
+            ))}
+          </div>
+
+          {/* One-liner */}
+          <p className="cs-sublabel fade-up">What is this project?</p>
+          <p className="cs-oneliner fade-up">
+            Designed a research-driven solution to support students who want to practice their cultural hobbies and manage them along with hectic academic schedules.
+          </p>
+
+          {/* Metadata grid */}
+          <div className="cs-meta fade-up">
+            <div className="cs-meta-row cs-meta-row-top">
+              <div className="cs-meta-cell">
+                <div className="cs-meta-key">Institution</div>
+                <div className="cs-meta-val">Cornell University</div>
+              </div>
+              <div className="cs-meta-cell">
+                <div className="cs-meta-key">My Role</div>
+                <div className="cs-meta-val">UX Researcher &amp; Interaction Designer</div>
+              </div>
+              <div className="cs-meta-cell">
+                <div className="cs-meta-key">Timeline</div>
+                <div className="cs-meta-val">13 Weeks · May 2025</div>
+              </div>
+            </div>
+            <div className="cs-meta-row cs-meta-row-mid">
+              <div className="cs-meta-cell cs-meta-team">
+                <div className="cs-meta-key">Team</div>
+                <div className="cs-meta-team-avatars" aria-label="Project team">
+                  {TEAM.map(member => (
+                    <div key={member.name} className="cs-meta-team-role">
+                      <img src={member.avatar} alt="" className="cs-team-avatar" />
+                      <div className="cs-team-role-label">{member.name}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="cs-meta-row cs-meta-row-tools">
+              <div className="cs-meta-cell cs-meta-tools">
+                <div className="cs-meta-key">Tools</div>
+                <div className="cs-tool-logos">
+                  {TOOLS.map(t => (
+                    <div key={t.name} className="cs-tool-item">
+                      <img src={t.src} alt={t.name} title={t.name} className="cs-tool-logo" />
+                      <p className="cs-tool-name">{t.name}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* ── OVERVIEW ───────────────────────────────────────────── */}
+        <div className="cs-section" id="overview">
+          <p className="cs-section-label">Overview</p>
+          <div className="cs-body fade-up">
+            <p className="cs-bold-intro">
+              Cornell brings together students from culturally diverse backgrounds.
+            </p>
+            <p>
+              And somewhere between orientation week and finals season, a lot of them quietly stop doing the things that they grew up loving, traditional cooking, dance, music, art, the cultural hobbies that tied them to home.
+            </p>
+            <p>
+              It is because they struggle to maintain these hobbies while navigating the demands of university life. Because there was no time, no space, no community, and honestly, no easy way to find any of those things.
+            </p>
+            <p>
+              Now you might think that there are cultural clubs one could join. But they're not built for this. To join most cultural clubs, you need to already be skilled. They're not designed for the student who grew up folding dumplings with their grandmother, or who learned Bharatanatyam basics as a child but never trained formally, someone who loves the practice, feels culturally grounded by it, and wants to get back to it, but has no entry point. There was no one holistic system where you could pursue your own cultural hobby at your own level, stumble into someone else's tradition, and feel welcome doing either. That gap is what we were designing for.
+            </p>
+            <p>
+              Over the course of this project, we ran contextual interviews, designed and distributed physical cultural probe kits to participants, conducted an autoethnographic research within our research team, synthesized everything through affinity mapping and personas, and landed on a design concept. This case study is a gist of my process throughout this project.
+            </p>
           </div>
         </div>
-      </header>
 
-      {/* MAIN CONTENT */}
-      <div className="case-study-layout">
-        <div className="content-container">
-          
-          {/* Mockup Section - No Container */}
-          <div className="mockup-section">
-            {routesMockup ? (
-              <img 
-                src={routesMockup} 
-                alt="Routes to Roots Project Mockup"
-                className="mockup-image"
-              />
-            ) : (
-              <div style={{color: '#999', fontSize: '1.2rem', textAlign: 'center'}}>
-                <div>Project Mockup</div>
-                <small>(Routes to Roots Interface)</small>
+        {/* ── PROBLEM ────────────────────────────────────────────── */}
+        <div className="cs-section" id="problem">
+          <p className="cs-section-label">Problem</p>
+          <div className="cs-body">
+            <p className="cs-bold-intro fade-up problem-lead">
+              Once the problem was clear, we put forth a list of research questions to guide us through the research process.
+            </p>
+          </div>
+
+          <CardStack cards={QUESTION_CARDS} />
+        </div>
+
+        {/* ── SOLUTION PREVIEW ───────────────────────────────────── */}
+        <div className="cs-section" id="solution-preview">
+          <p className="cs-section-label">Solution Preview</p>
+          <p className="cs-solution-oneliner fade-up">Here is a walkthrough of the final design solution.</p>
+
+          <div className="cs-video-wrap fade-up">
+            <iframe
+              src="https://www.youtube.com/embed/NbugF3D0B9k"
+              title="Routes to Roots — Final Design Demo"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+
+          <button className="cs-skip-btn fade-up" onClick={skipToFinal}>
+            <span className="cs-skip-icon" aria-hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 5v10M7 12l5 5 5-5" />
+              </svg>
+            </span>
+            <span className="cs-skip-label">In a hurry? Skip to the final design</span>
+          </button>
+        </div>
+
+        {/* ── KEY OUTPUTS ────────────────────────────────────────── */}
+        <div className="cs-section" id="impact" ref={impactRef}>
+          <p className="cs-section-label">Key Outputs</p>
+          <div className="impact-row">
+            <CountBox end={10} suffix="+" inView={impactInView}
+              label="Cornell students recruited across cultural clubs as research participants" />
+            <CountBox end={2}  suffix="" inView={impactInView}
+              label="Complementary research methods in this mixed-method research study (cultural probes and autoethnography)" />
+            <CountBox end={1}  suffix="" inView={impactInView}
+              label="High-fidelity prototype presented to the class" />
+          </div>
+          <p className="impact-note fade-up">
+            The most meaningful impact was winning "Best Project for Social Impact and Uniqueness" amongst 75+ students.
+          </p>
+        </div>
+
+        {/* ── RESEARCH PROCESS ────────────────────────────────────── */}
+        <div className="cs-section" id="design-process">
+          <p className="cs-section-label">Research Process</p>
+
+          <p className="process-intro fade-up">
+            The research process was messy and interesting. Every diary study entry surfaced the emotional depth of the problem, and every research method revealed something we had overlooked.
+          </p>
+
+          <div className="process-timeline">
+
+            {/* 01 — LEFT — Contextual Interviews */}
+            <div className="process-step">
+              <div className="ps-content fade-up">
+                <div className="ps-img">
+                  <img src={interviewImg} alt="Contextual interviews" />
+                </div>
+                <p className="ps-num">01</p>
+                <h3 className="ps-title">Contextual Interviews</h3>
+                <p className="ps-text">
+                  We started off the research process by interviewing and observing students who practiced cultural hobbies. We wanted to understand what these hobbies meant to the users and analyze the space that we had to design for.
+                </p>
               </div>
+              <div />
+            </div>
+
+            <RoadConnector flip={false} />
+
+            {/* 02 — RIGHT — Cultural Probes & Diary Studies */}
+            <div className="process-step">
+              <div />
+              <div className="ps-content fade-up">
+                <div className="ps-img">
+                  <img src={probesImg} alt="Cultural probe kit" className="clickable-image" onClick={() => openModal([probesImg, probe2, probe3, probe4, probe5], 0)} />
+                </div>
+                <p className="image-subtext">Click to browse the full probe kit →</p>
+                <p className="ps-num">02</p>
+                <h3 className="ps-title">Method: Cultural Probes &amp; Diary Studies</h3>
+                <p className="ps-text">
+                  <strong>Why?</strong> The first method was a cultural probe kit. We wanted participants to show us things they couldn't easily say out loud. So we chose a cultural probe kit with scrapbooks, postcards, and timeline maps, low-pressure creative materials that let emotions surface naturally, without the awkwardness of a formal interview. Alongside that, we had them fill out daily diary prompts for a week, capturing their actual routines in real time.
+                </p>
+              </div>
+            </div>
+
+            <RoadConnector flip={true} />
+
+            {/* 03 — LEFT — Persona creation */}
+            <div className="process-step">
+              <div className="ps-content fade-up">
+                <div className="ps-img">
+                  <img src={personaImg} alt="Persona" className="clickable-image" onClick={() => openModal(personaImg)} />
+                </div>
+                <p className="image-subtext">Click to view in detail</p>
+                <p className="ps-num">03</p>
+                <h3 className="ps-title">Persona Creation</h3>
+                <p className="ps-text">
+                  Once we had completed probe kits and conducted exit interviews with participants. The findings from method 1 helped us weave a persona representing the user group we were solving for.
+                </p>
+              </div>
+              <div />
+            </div>
+
+            <RoadConnector flip={false} />
+
+            {/* 04 — RIGHT — AutoEthnography */}
+            <div className="process-step">
+              <div />
+              <div className="ps-content fade-up">
+                <div className="ps-img">
+                  <img src={autoethnoImg} alt="Autoethnography study" className="clickable-image" onClick={() => openModal(autoethnoImg)} />
+                </div>
+                <p className="image-subtext">Click to view in detail</p>
+                <p className="ps-num">04</p>
+                <h3 className="ps-title">Method: Autoethnography</h3>
+                <p className="ps-text">
+                  <strong>Why?</strong> Every person on our team came from a culturally diverse background, and most of us had felt that quiet drift away from our own cultural practices at some point in college. So it made sense to turn inward. We ran an autoethnography study after Method 1, making ourselves the participants. We genuinely fit the people we were designing for, and there's something you can only learn from your own honest experience that no interview script can pull out of someone else.
+                </p>
+              </div>
+            </div>
+
+            <RoadConnector flip={true} />
+
+            {/* 05 — LEFT — Findings */}
+            <div className="process-step">
+              <div className="ps-content fade-up">
+                <div className="ps-img">
+                  <img src={findings4} alt="Findings & synthesis" className="clickable-image" onClick={() => openModal([findings4, findings1, findings2, findings3], 0)} />
+                </div>
+                <p className="image-subtext">Click to browse the findings →</p>
+                <p className="ps-num">05</p>
+                <h3 className="ps-title">Findings</h3>
+                <p className="ps-list-label">The cultural probe method revealed:</p>
+                <ul className="ps-sublist">
+                  <li>Cultural hobbies help the students to sustain a connection to their heritage and strengthen social bonds.</li>
+                  <li>Cultural hobbies act as anchors of self-identity and aspiration.</li>
+                  <li>Cultural engagement is often deprioritized in hectic academic schedules</li>
+                </ul>
+                <p className="ps-list-label">The autoethnography study revealed:</p>
+                <ul className="ps-sublist">
+                  <li>Most apps lacked built-in motivators, resulting in self-driven participation.</li>
+                  <li>Participants desired tools for reflection and growth tracking.</li>
+                  <li>Cultural connection fluctuated with the tone and depth of content.</li>
+                </ul>
+              </div>
+              <div />
+            </div>
+
+            <RoadConnector flip={false} />
+
+            {/* 06 — RIGHT — Design Ideation */}
+            <div className="process-step">
+              <div />
+              <div className="ps-content fade-up">
+                <div className="ps-img">
+                  <img src={ideationImg} alt="Design ideation sketches" className="clickable-image" onClick={() => openModal(ideationImg)} />
+                </div>
+                <p className="image-subtext">Click to view in detail</p>
+                <p className="ps-num">06</p>
+                <h3 className="ps-title">Design Ideation</h3>
+                <p className="ps-text">
+                  We sketched low-fidelity sketches of multiple concepts, including apps, community boards, and event platforms. A competitor analysis of existing hobby apps (YouTube, Duolingo-style trackers, cooking platforms) revealed they all prioritized productivity over cultural connection.
+                </p>
+                <p className="ps-text"><strong>We decided not to build another app.</strong></p>
+              </div>
+            </div>
+
+            <RoadConnector flip={true} />
+
+            {/* 07 — LEFT — Final Design concept */}
+            <div className="process-step">
+              <div className="ps-content fade-up">
+                <div className="ps-img">
+                  <img src={finalDesignImg} alt="Routes to Roots kiosk concept" className="clickable-image" onClick={() => openModal(finalDesignImg)} />
+                </div>
+                <p className="image-subtext">Click to view in detail</p>
+                <p className="ps-num">07</p>
+                <h3 className="ps-title">Final Design</h3>
+                <p className="ps-text">
+                  We developed a final concept, Routes to Roots, a physical kiosk placed in visible spaces across the Cornell campus (eg, Duffield, Sage Atrium). It offers students an accessible, reflective way to rediscover and connect with their cultural hobbies through peers, events, and visible spaces. The kiosk steps in to fill the gaps of:
+                </p>
+                <ul className="ps-sublist">
+                  <li><strong>Visibility:</strong> Making culturally meaningful hobbies public and discoverable.</li>
+                  <li><strong>Agency:</strong> Empowering students to define and share their own practices.</li>
+                  <li><strong>Emotional resonance:</strong> Prioritizing curiosity and reflection over achievement.</li>
+                </ul>
+              </div>
+              <div />
+            </div>
+
+          </div>
+        </div>
+
+        {/* ── FINAL DESIGN ───────────────────────── */}
+        <div className="cs-section" id="final-design">
+          <p className="cs-section-label">Final Design</p>
+          <div className="fd-grid fade-up">
+            <div className="fd-item">
+              <img src={fd1} alt="Final design concept 1" className="clickable-image" onClick={() => openModal(fd1)} />
+              <p className="image-subtext">Click to view in detail →</p>
+            </div>
+            <div className="fd-item">
+              <img src={fd2} alt="Final design concept 2" className="clickable-image" onClick={() => openModal(fd2)} />
+              <p className="image-subtext">Click to view in detail →</p>
+            </div>
+            <div className="fd-item">
+              <img src={fd3} alt="Final design concept 3" className="clickable-image" onClick={() => openModal(fd3)} />
+              <p className="image-subtext">Click to view in detail →</p>
+            </div>
+            <div className="fd-item">
+              <img src={fd4} alt="Final design concept 4" className="clickable-image" onClick={() => openModal(fd4)} />
+              <p className="image-subtext">Click to view in detail →</p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── WHAT WE DECIDED NOT TO BUILD ───────────────────────── */}
+        <div className="cs-section" id="not-to-build">
+          <p className="cs-section-label">What We Decided Not to Build &amp; Why</p>
+          <div className="ntb-list">
+            <div className="ntb-item fade-up">
+              <h3 className="ntb-item-title">A physical cultural center</h3>
+              <p className="ntb-desc">
+                One concept we seriously explored was a dedicated campus space with different rooms dedicated to different hobbies: instruments you could borrow, art supplies, and cooking equipment. The idea was that if you used to play violin as a kid but don't have one here, you shouldn't have to buy a new one just to reconnect with something that's always been part of you. It was a compelling concept. But we kept coming back to the same problem: visibility. Cornell is already full of resources that students don't know about. A cultural center, however well-equipped, risks becoming just another thing that exists on campus without reaching the people who need it most, exactly like the cultural clubs we started this project trying to understand. So we let it go.
+              </p>
+            </div>
+            <div className="ntb-item fade-up">
+              <h3 className="ntb-item-title">A mobile app</h3>
+              <p className="ntb-desc">
+                Our autoethnography showed clearly that apps don't sustain cultural engagement on their own. Emotional connection doesn't come from an app; it comes from a triggering memory. An app would have replicated the same hollow experience we were trying to fix.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── 3 THINGS LEARNED ───────────────────────────────────── */}
+        <div className="cs-section" id="takeaways">
+          <p className="cs-section-label">3 Things That This Project Taught Me</p>
+          <div className="learnings-list">
+            <div className="learning-item fade-up">
+              <span className="learning-n">1</span>
+              <p className="learning-text">
+                <strong>Design beyond usability.</strong> This project shifted something for me. I'm used to asking "Is this intuitive?" or "Can users complete the task?" But Routes to Roots asked a completely different question: Does this make someone feel like they belong? Designing for that, for the feeling of being seen, required me to slow down and sit with the research in a way I hadn't before. It was uncomfortable in a good way.
+              </p>
+            </div>
+            <div className="learning-item fade-up">
+              <span className="learning-n">2</span>
+              <p className="learning-text">
+                <strong>Mixed method research is highly useful when used the right way.</strong> Cultural probes let participants show us things they couldn't have said in an interview, grief about lost hobbies, longing in a postcard, pride in a scrapbook drawing. Autoethnography let us feel those same things ourselves. Neither would have been enough on its own. Together, they gave us a kind of view of the problem that I think showed up in the depth of our final design.
+              </p>
+            </div>
+            <div className="learning-item fade-up">
+              <span className="learning-n">3</span>
+              <p className="learning-text">
+                <strong>Not only this project but this course taught me that the most impactful design is not always an app or something digital.</strong> That sounds obvious when I say it out loud, but it really wasn't during the project. Every design instinct pulls you toward a screen. What changed for us was paying attention to where students actually were, walking through Duffield, sitting in Sage Atrium, passing through spaces they use every single day. A kiosk in those spaces does something an app notification never could: it catches you when you weren't looking for it.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── SKILLS ─────────────────────────────────────────────── */}
+        <div className="cs-section" id="skills">
+          <p className="cs-section-label">Skills Gained Through This Project</p>
+          <div className="skills-pills">
+            {[
+              'Cultural Probes Design',
+              'Diary Study',
+              'Autoethnography',
+              'Affinity Mapping',
+              'Persona Development',
+              'Interaction Design',
+              'Kiosk UX',
+              'Figma Prototyping',
+              'Qualitative Data Analysis',
+              'R (data visualization)',
+              'Physical Research Artifact Design'
+            ].map(s => (
+              <span key={s} className="skill-pill fade-up">{s}</span>
+            ))}
+          </div>
+        </div>
+
+        {/* ── THE PEOPLE BEHIND ALL THIS ────────────────────────── */}
+        <div className="cs-section" id="people">
+          <p className="cs-section-label">The People Behind All This</p>
+          <div className="people-img-wrap fade-up">
+            <img src={groupImg} alt="Routes to Roots team" />
+          </div>
+        </div>
+
+        {/* ── THE END ────────────────────────────────────────────── */}
+        <div className="cs-the-end">
+          <p className="cs-the-end-text fade-up">THE END</p>
+        </div>
+
+        </div>{/* /cs-content */}
+      </div>{/* /cs-page-layout */}
+
+      {/* ── SEE NEXT ─────────────────────────────────────────────── */}
+      <div className="see-next">
+        <p className="see-next-label fade-up">See Next</p>
+        <div className="see-next-grid">
+          <a href="/google-cloud-case-study" className="see-next-card fade-up">
+            <img src={googleMockup} alt="Google Cloud Capstone" className="see-next-img" />
+            <div className="see-next-body">
+              <h3 className="see-next-title">Google Cloud Capstone</h3>
+              <p className="see-next-desc">Designed a linear onboarding flow that reimagines how cloud platforms can guide non-technical users.</p>
+            </div>
+          </a>
+          <a href="/ithaca-soap-case-study" className="see-next-card fade-up">
+            <img src={ithacaSoapMockup} alt="Ithaca Soap Redesign" className="see-next-img" />
+            <div className="see-next-body">
+              <h3 className="see-next-title">Ithaca Soap Redesign</h3>
+              <p className="see-next-desc">Designed and developed a sustainable-first mobile app using Vue.js for a small business called Ithaca Soap.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <SiteFooter />
+
+      {/* Image Modal / Gallery */}
+      {modalImages && (
+        <div className="image-modal-overlay" onClick={closeModal}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="image-modal-close" onClick={closeModal}>×</button>
+            {modalImages.length > 1 && (
+              <button className="image-modal-nav prev" onClick={modalPrev} aria-label="Previous image">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+            )}
+            <img src={modalImages[modalIndex]} alt="Enlarged view" />
+            {modalImages.length > 1 && (
+              <button className="image-modal-nav next" onClick={modalNext} aria-label="Next image">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            )}
+            {modalImages.length > 1 && (
+              <div className="image-modal-counter">{modalIndex + 1} / {modalImages.length}</div>
             )}
           </div>
-
-          {/* Project Metadata */}
-          <div className="project-metadata fade-in-up">
-            <div className="metadata-item fade-in-left">
-              <div className="metadata-label">Role</div>
-              <div className="metadata-value">UX Researcher + Designer</div>
-            </div>
-            <div className="metadata-item fade-in-up">
-              <div className="metadata-label">Team</div>
-              <div className="metadata-value">Shreayaa, Hrishika, Sumit, Ashley and Carrie</div>
-            </div>
-            <div className="metadata-item fade-in-right">
-              <div className="metadata-label">Timeline</div>
-              <div className="metadata-value">Jan 2025 - May 2025</div>
-            </div>
-          </div>
-
-          {/* Cascading Cards - HORIZONTAL STACKING */}
-          <div className="cascade-section">
-            <div className="cascade-container">
-              
-              {/* Section cards stacked horizontally */}
-              {caseStudySections.map((section) => (
-                <div 
-                  key={section.id}
-                  className="cascade-card"
-                  onClick={() => scrollToSection(section.id)}
-                >
-                  <h3>{section.title}</h3>
-                </div>
-              ))}
-              
-              {/* Play button positioned to the right */}
-              <div className="play-button" onClick={() => scrollToSection(1)}>
-                <div className="play-icon"></div>
-              </div>
-            </div>
-          </div>
-
         </div>
-      </div>
+      )}
 
-      {/* CONTENT SECTIONS */}
-      <div className="content-sections">
-        {caseStudySections.map((section, index) => (
-          <div 
-            key={section.id}
-            id={`section-${section.id}`}
-            className={`content-section fade-in-up`}
-          >
-            <div className={`section-header fade-in-${index % 2 === 0 ? 'left' : 'right'}`}>
-              <h2 className="section-title">{section.title}</h2>
-            </div>
-            <div className="section-content fade-in-up">{section.content}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* NAVIGATION BUTTONS */}
-      <div className="nav-buttons fade-in-up">
-        <a href="/work" className="nav-button primary fade-in-left">
-          View My Other Work
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M7 17L17 7M17 7H7M17 7V17"/>
-          </svg>
-        </a>
-        <button onClick={scrollToTop} className="nav-button secondary fade-in-right">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M18 15L12 9L6 15"/>
-          </svg>
-          Back to Top
-        </button>
-      </div>
-
-      {/* FOOTER */}
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-message">
-            <h3>Like my work? Hit me up with a hi 😊</h3>
-          </div>
-          
-          <div className="footer-links">
-            <a href="https://www.linkedin.com/in/shreayaa-nadagudy-srinivasan-b41a271a8/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-              </svg>
-            </a>
-            <a href="https://medium.com/@shreayaa" target="_blank" rel="noopener noreferrer" title="Medium">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/>
-              </svg>
-            </a>
-            <a href="https://dribbble.com" target="_blank" rel="noopener noreferrer" title="Dribbble">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 24C5.385 24 0 18.615 0 12S5.385 0 12 0s12 5.385 12 12-5.385 12-12 12zm10.12-10.358c-.35-.11-3.17-.953-6.384-.438 1.34 3.684 1.887 6.684 1.992 7.308 2.3-1.555 3.936-4.02 4.395-6.87zm-6.115 7.808c-.153-.9-.75-4.032-2.19-7.77l-.066.02c-5.79 2.015-7.86 6.025-8.04 6.4 1.74 1.36 3.92 2.166 6.29 2.166 1.42 0 2.77-.29 4-.816zm-11.62-2.58c.232-.4 3.045-5.055 8.332-6.765.135-.045.27-.084.405-.12-.26-.585-.54-1.167-.832-1.74C7.17 11.775 2.206 11.71 1.756 11.7l-.004.312c0 2.633.998 5.037 2.634 6.855zm-2.42-8.955c.46.008 4.683.026 9.477-1.248-1.698-3.018-3.53-5.558-3.8-5.928-2.868 1.35-5.01 3.99-5.676 7.17zM9.6 2.052c.282.38 2.145 2.914 3.822 6 3.645-1.365 5.19-3.44 5.373-3.702-1.81-1.61-4.19-2.586-6.795-2.586-.825 0-1.63.1-2.4.285zm10.335 3.483c-.218.29-1.935 2.493-5.724 4.04.24.49.47.985.68 1.486.08.18.15.36.22.53 3.41-.43 6.8.26 7.14.33-.02-2.42-.88-4.64-2.31-6.38z"/>
-              </svg>
-            </a>
-            <a href="mailto:shreayaasrini@gmail.com" title="Email">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.904.732-1.636 1.636-1.636h1.818L12 11.73l8.545-7.909h1.818c.904 0 1.636.732 1.636 1.636 Z"/>
-              </svg>
-            </a>
-          </div>
-
-          <p className="footer-copyright">Designed + Coded with ❤️ by Shreayaa Srinivasan © 2025</p>
-        </div>
-      </footer>
     </div>
   );
 }
-
-export default RoutesToRoots;

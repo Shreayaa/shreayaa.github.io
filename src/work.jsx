@@ -1,89 +1,9 @@
 import React, { useEffect, useRef } from 'react';
+import SiteHeader from './components/SiteHeader';
 import trophyIcon from './assets/general/trophy.png';
-import logo from './assets/general/profile.png';
-import capstoneMockup from './assets/google-cloud/capstone-mockup.png';
-import ithacaSoapMockup from './assets/ithaca-soap/ithaca-soap-mockup.png';
-import iNameMockup from './assets/iname/iName.png';
-import routes from './assets/routes-to-roots/routes.png';
-import ecocart from './assets/ecocart/ecoCart.png';
-import rShiny from './assets/r-shiny/rShiny.png';
-import dialogflow from './assets/tools/Dialogflow CX.png';
-import gemini from './assets/tools/Google_Gemini_logo.svg.png';
-import openai from './assets/tools/OpenAI-black-monoblossom.png';
-import slack from './assets/tools/Slack.svg';
-import vertex from './assets/tools/Vertex AI.png';
-import colab from './assets/tools/colab.svg';
-import figmaTool from './assets/tools/figma.png';
-import gcloud from './assets/tools/google-cloud-1.svg';
-import notion from './assets/tools/notion-logo-no-background.png';
-import pythonLogo from './assets/tools/python-logo-only.png';
-import miroLogo from './assets/tools/Miro-Icon.png';
-import rLogo from './assets/tools/RStudio.png';
-import docsLogo from './assets/tools/google-docs.png';
-import photoshopLogo from './assets/tools/Adobe Photoshop.png';
-import vueLogo from './assets/tools/Vue.js.png';
-import vuetifyLogo from './assets/tools/Veutify.png';
-import githubLogo from './assets/tools/GitHub.png';
-import copilotLogo from './assets/tools/copilot-color.png';
-import canvaLogo from './assets/tools/Canva.png';
-import ggplotLogo from './assets/tools/ggplot.svg.png';
-import midjourneyLogo from './assets/tools/midjourney.png';
-import dplyrLogo from './assets/tools/dplyr.png';
-import rPngLogo from './assets/tools/R.png';
+// project assets moved to src/projects.js to avoid exporting constants from component file
 
-const projects = [
-  {
-    id: 1,
-    title: "Cornell x Google Cloud Capstone Project",
-    description: "Designed a linear onboarding flow that reimagines how cloud platforms can guide non-technical users.",
-    image: capstoneMockup,
-    imageType: "laptop",
-    caseStudyUrl: "/google-cloud-case-study",
-    toolLogos: [gcloud, colab, dialogflow, vertex, gemini, pythonLogo, slack, notion]
-  },
-  {
-    id: 2,
-    title: "Ithaca Soap Redesign",
-    description: "Redesigned a local brand’s app to connect sustainability values with user priorities.",
-    image: ithacaSoapMockup,
-    imageType: "mobile",
-    caseStudyUrl: "/ithaca-soap-case-study"
-  },
-
-  {
-    id: 3,
-    title: "Routes to Roots App",
-    description: "Developed a kiosk-based system that helps students reconnect with cultural hobbies promoting belonging in campus life.",
-    image: routes,
-    imageType: "mobile",
-    caseStudyUrl: "/routes-to-roots-case-study"
-  },
-  {
-    id: 4,
-    title: "iName App",
-    description: "Built a mobile app and wearable environment that helps people pronounce and remember names correctly, fostering identity and inclusion.",
-    image: iNameMockup,
-    imageType: "mobile",
-    caseStudyUrl: "/iname-case-study"
-  },
-
-  {
-    id: 5,
-    title: "EcoCart App",
-    description: "Designed a mobile app that makes sustainable grocery shopping simple and actionable by turning confusing eco-labels into clear choices.",
-    image: ecocart,
-    imageType: "laptop",
-    caseStudyUrl: "/ecocart-case-study"
-  },
-  {
-    id: 6,
-    title: "Immunization Data Analysis Dashboard",
-    description: "Developed an interactive dashboard that transforms messy vaccination data into clear insights for educators and policymakers.",
-    image: rShiny,
-    imageType: "mobile",
-    caseStudyUrl: "/rshiny-case-study"
-  }
-];
+import { projects } from './projects';
 
 function Work() {
   const projectRefs = useRef([]);
@@ -747,25 +667,7 @@ function Work() {
       </style>
 
       {/* HEADER - Fixed structure to match About.jsx */}
-      <header className="header">
-        <div className="content-container">
-          <div className="header-content">
-            <a href="/">
-              <div className="logo">
-                <img src={logo} alt="Shreayaa Srinivasan Logo" className="custom-logo" />
-              </div>
-            </a>
-            <nav className="nav-links">
-              <a href="/work">WORK</a>
-              <a href="/playground">PLAYGROUND</a>
-              <a href="/about">ABOUT</a>
-              <a href="https://drive.google.com/file/d/1nE7H77ctf1esubvyXuKoVVAPnDlRB8R0/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-                RESUME
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* WORK SECTION */}
       <section className="work-section">
@@ -809,71 +711,30 @@ function Work() {
                   </div>
                 )}
 
-                {/* Render tool logos ONLY for Cornell x Google Cloud (project id 1) */}
-                {project.id === 1 && project.toolLogos && (
+                {/* Render tool logos if provided in project data */}
+                {project.toolLogos && (
                   <div className="tool-logos-row">
-                   {[gcloud, colab, dialogflow, vertex, gemini, pythonLogo, figmaTool, slack, notion].map((logoSrc, idx) => (
+                    {project.toolLogos.map((logoSrc, idx) => (
                       <img key={idx} src={logoSrc} alt={`tool-${idx}`} className="tool-logo" />
                     ))}
                   </div>
                 )}
 
-                {/* Render tool logos for Ithaca Soap Redesign (project id 2) */}
-                {project.id === 2 && (
-                  <div className="tool-logos-row">
-                    {[vueLogo, vuetifyLogo, githubLogo, copilotLogo, figmaTool, canvaLogo, openai].map((logoSrc, idx) => (
-                      <img key={idx} src={logoSrc} alt={`ithaca-tool-${idx}`} className="tool-logo" />
-                    ))}
-                  </div>
-                )}
-
-                {/* Render tool logos for Routes to Roots App (project id 3) */}
+                {/* Optional award text for specific projects */}
                 {project.id === 3 && (
-                  <>
-                    <div className="tool-logos-row">
-                      {[figmaTool, miroLogo, canvaLogo, rLogo, openai, docsLogo, photoshopLogo].map((logoSrc, idx) => (
-                        <img key={idx} src={logoSrc} alt={`routes-tool-${idx}`} className="tool-logo" />
-                      ))}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem' }}>
-                      <img src={trophyIcon} alt="Trophy" style={{ width: '28px', height: '28px', objectFit: 'contain', marginRight: '0.5rem' }} />
-                      <span style={{ fontSize: '1.2rem', color: '#4a4a4a', fontWeight: 400, lineHeight: '1.7' }}>
-                        Awarded best project for social impact and uniqueness amongst 15+ teams in class
-                      </span>
-                    </div>
-                  </>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem' }}>
+                    <img src={trophyIcon} alt="Trophy" style={{ width: '28px', height: '28px', objectFit: 'contain', marginRight: '0.5rem' }} />
+                    <span style={{ fontSize: '1.2rem', color: '#4a4a4a', fontWeight: 400, lineHeight: '1.7' }}>
+                      Awarded best project for social impact and uniqueness amongst 15+ teams in class
+                    </span>
+                  </div>
                 )}
                 {project.id === 4 && (
-                  <>
-                    <div className="tool-logos-row">
-                      {[figmaTool, miroLogo, canvaLogo, openai, docsLogo].map((logoSrc, idx) => (
-                        <img key={idx} src={logoSrc} alt={`iname-tool-${idx}`} className="tool-logo" />
-                      ))}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem' }}>
-                      <img src={trophyIcon} alt="Trophy" style={{ width: '28px', height: '28px', objectFit: 'contain', marginRight: '0.5rem' }} />
-                      <span style={{ fontSize: '1.2rem', color: '#4a4a4a', fontWeight: 400, lineHeight: '1.7' }}>
-                        Awarded best project for social impact amongst 250+ students in class
-                      </span>
-                    </div>
-                  </>
-                )}
-
-                {/* Render tool logos for EcoCart App (project id 5) */}
-                {project.id === 5 && (
-                  <div className="tool-logos-row">
-                    {[figmaTool, miroLogo, canvaLogo, openai, docsLogo].map((logoSrc, idx) => (
-                      <img key={idx} src={logoSrc} alt={`ecocart-tool-${idx}`} className="tool-logo" />
-                    ))}
-                  </div>
-                )}
-
-                {/* Render tool logos for Immunization Data Dashboard (project id 6) */}
-                {project.id === 6 && (
-                  <div className="tool-logos-row">
-                    {[rLogo, rPngLogo, githubLogo, ggplotLogo, dplyrLogo, midjourneyLogo].map((logoSrc, idx) => (
-                      <img key={idx} src={logoSrc} alt={`immunization-tool-${idx}`} className="tool-logo" />
-                    ))}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem' }}>
+                    <img src={trophyIcon} alt="Trophy" style={{ width: '28px', height: '28px', objectFit: 'contain', marginRight: '0.5rem' }} />
+                    <span style={{ fontSize: '1.2rem', color: '#4a4a4a', fontWeight: 400, lineHeight: '1.7' }}>
+                      Awarded best project for social impact amongst 250+ students in class
+                    </span>
                   </div>
                 )}
               </div>
@@ -912,7 +773,7 @@ function Work() {
             </a>
           </div>
 
-          <p className="footer-copyright">Designed + Coded with 🩷 by Shreayaa Srinivasan © 2025 </p>
+          <p className="footer-copyright">Designed + Coded with 🩷 by Shreayaa Srinivasan © 2026 </p>
         </div>
       </footer>
     </div>

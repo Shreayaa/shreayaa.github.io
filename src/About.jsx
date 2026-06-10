@@ -1,143 +1,183 @@
-import React, { useEffect, useRef } from 'react';
-import { ArrowLeft } from 'lucide-react';
-import logo from './assets/general/profile.png';
+import React, { useEffect, useRef, useState } from 'react';
+import { MapPin, Briefcase } from 'lucide-react';
+import SiteHeader from './components/SiteHeader';
+import SiteFooter from './components/SiteFooter';
 
-const timelineData = [
-  {
-    description: [
-      <span style={{display: 'block', marginBottom: '1em'}}>August 2020 rolls around, and there I am stepping foot in the beautiful UMass Amherst campus! Interested in tech and psychology I decided to double major in Computer Science and Psychology.</span>,
-      <span style={{display: 'block', marginBottom: '1em'}}></span>,
-      <span style={{display: 'block', marginBottom: '1em'}}>Why choose one when you can have both, right?</span>
-    ],
-    position: "right",
-    watermark: "🎓",
-    isFirst: true,
-    year: "Aug 2020",
-    location: "University of Massachusetts Amherst",
-  },
-  {
-    description: [
-      <span style={{display: 'block', marginBottom: '1em'}}>Two years into my bachelor's journey, I got my first job yayyy!!!</span>,
-      <span style={{display: 'block', marginBottom: '1em'}}></span>,
-      <span style={{display: 'block', marginBottom: '1em'}}>Being an RA taught me how to create community. From late-night crisis management to organizing fun floor events, this experience taught me how to understand people's needs and create environments where everyone could thrive.</span>
-    ],
-    position: "left",
-    watermark: "💼",
-    year: "Aug 2022",
-    jobTitle: "Resident Assistant",
-  },
-  {
-    description: [
-      <span style={{display: 'block', marginBottom: '1em'}}>I had taken up a volunteer position a few months back and realized that I love to help others learn. So  I applied to be a Teaching Assistant. A semester later I got promoted to be Head TA.</span>,
-      <span style={{display: 'block', marginBottom: '1em'}}></span>,
-      <span style={{display: 'block', marginBottom: '1em'}}>As Head TA, I found myself leading a team of TAs and supporting 80+ students in Human-Computer Interaction.</span>,
-    ],
-    position: "right",
-    watermark: "💼",
-    year: "Feb 2024",
-    jobTitle: "Head Teaching Assistant"
-  },
-  {
-    description: [
-      <span style={{display: 'block', marginBottom: '1em'}}>Bachelor's degree in hand, I wasn't ready to stop learning. Enter Cornell University and my MPS in Information Science with a UX focus!</span>,
-      <span style={{display: 'block', marginBottom: '1em'}}>I was already in love with multi-disciplinary problem solving and I was trying to find an intersection between CS and psychology.</span>,
-      <span style={{display: 'block', marginBottom: '1em'}}>So Cornell's program was a dream come true! I loved learning about user research methods, design, prototyping and strategy. Plus, the campus is absolutely stunning!</span>,
-    ],
-    position: "left",
-    watermark: "🎓",
-    year: "Aug 2024",
-    location: "Cornell University, Ithaca"
-  },
-  {
-    description: [
-      <span style={{display: 'block', marginBottom: '1em'}}>During my time at Cornell, I worked as a Graduate Teaching Specialist, supporting 200+ students across design and programming coursework.</span>,
-      <span style={{display: 'block', marginBottom: '1em'}}>I graded assignments and mentored students as they explored design practices while programming.</span>,
-    ],
-    position: "right",
-    watermark: "💼",
-    year: "Aug 2024",
-    jobTitle: "Graduate Teaching Specialist",
-  },
-  {
-    description: [
-      <span style={{display: 'block', marginBottom: '1em'}}>I lived my capstone dream, working directly with Google Cloud.</span>,
-      <span style={{display: 'block', marginBottom: '1em'}}>Our team was mentored by some of the nicest folks at Google Cloud while we got to learn so much about enterprise design and research.</span>,
-    ],
-    position: "left",
-    watermark: "💼",
-    year: "Jan 2025",
-    jobTitle: "UX Designer + Researcher",
-  },
-  {
-    description: "I worked as a Graduate RA, diving into co-design research with remote mental health support systems.",
-    position: "right",
-    watermark: "💼",
-    year: "May 2025",
-    jobTitle: "Graduate Research Assistant",
-  }
+/* ── Tool sticker icons ── */
+import toolFigma    from './assets/about/figma.png';
+import toolMiro     from './assets/about/Miro-Icon.png';
+import toolNotion   from './assets/about/notion-logo-no-background.png';
+import toolGithub   from './assets/about/GitHub.png';
+import toolVue      from './assets/about/Vue.js.png';
+import toolSlack    from './assets/about/Slack.svg';
+import toolR        from './assets/about/R.png';
+import toolClaude   from './assets/about/claudecode-color.png';
+import toolPython   from './assets/about/python.png';
+import toolWebflow  from './assets/about/webflow.png';
+import toolAdobe    from './assets/about/adobe.png';
+import toolDatabase from './assets/about/database.png';
+import toolPhysics  from './assets/about/physics.png';
+import toolPicture  from './assets/about/picture.png';
+import cartImg      from './assets/about/shopping cart.png';
+
+/* ── Polaroid photos ── */
+import p01 from './assets/about/01956daf-188e-495e-bc0f-251abf3b48ed.JPG';
+import p02 from './assets/about/IMG_1779.JPG';
+import p03 from './assets/about/IMG_1864.JPG';
+import p04 from './assets/about/IMG_2558.jpeg';
+import p05 from './assets/about/IMG_2649.jpeg';
+import p06 from './assets/about/IMG_2801.jpeg';
+import p07 from './assets/about/IMG_3139.jpeg';
+import p08 from './assets/about/IMG_3556.JPG';
+import p09 from './assets/about/IMG_3849.jpeg';
+import p10 from './assets/about/IMG_3954.jpeg';
+import p11 from './assets/about/e5c101e2-8a86-45d0-af32-bba8116e26dd.JPG';
+import p12 from './assets/about/f0d1cf2b-9103-47e6-ae39-8120952977a6.JPG';
+import p13 from './assets/about/IMG_0918.jpeg';
+import p14 from './assets/about/IMG_1935.JPG';
+import p15 from './assets/about/IMG_3968.jpeg';
+
+/* ── "How I Got Here" journey (left-aligned, same format for every entry) ── */
+const journey = [
+  { date: 'May 2020', place: 'Chennai, India',               type: 'location', body: `After wrapping up high school with a suitcase full of dreams in hand, I made one of the biggest and best decisions of my life, to pursue my bachelor's degree in the United States. Little did I know, this was just the start of an incredible adventure.` },
+  { date: 'Aug 2020', place: 'UMass Amherst',                type: 'location', body: `I stepped foot on the beautiful UMass Amherst campus! I was really interested in both tech and psychology. So I decided to double major in Computer Science and Psychology. Why choose one when you can have both, right?`,
+    hl: ['double major in Computer Science and Psychology'] },
+  { date: 'Aug 2022', place: 'Resident Assistant',           type: 'job',      body: `Two years into my bachelor's journey, I got my first job, yayyy! Being an RA taught me how to create community, from late night on-call duties to organizing fun floor events, I learned how to understand people's needs and build environments where everyone could thrive.`,
+    hl: ['how to create community', "understand people's needs"] },
+  { date: 'Feb 2024', place: 'Head Teaching Assistant',      type: 'job',      body: `I had taken up a volunteer position and realized I love helping others learn, so I applied to be a Teaching Assistant. A semester later I was promoted to Head TA, leading a team of TAs and supporting 80+ students in the course "Human-Computer Interaction."`,
+    hl: ['I love helping others learn', 'leading a team of TAs and supporting 80+ students'] },
+  { date: 'Aug 2024', place: 'Cornell University, Ithaca',   type: 'location', body: `Bachelor's degree in hand, I wasn't ready to stop learning. Enter Cornell University and a masters in Information Science with a UX focus! I absolutely loved choosing a field that combined my passion for psychology and my skills in technology. I learned about user research methods, design, prototyping and strategy. Plus the campus is absolutely stunning, I loved being so close to nature, the hiking trails, the waterfalls it was all so breathtaking.`,
+    hl: ['loved choosing a field that combined my passion for psychology and my skills in technology', 'I loved being so close to nature, the hiking trails, the waterfalls'] },
+  { date: 'Aug 2024', place: 'Graduate Teaching Specialist', type: 'job',      body: `With some experience in teaching from my time at UMass and my passion to help others learn I accepted a role as a Graduate Teaching Specialist, supporting 200+ students across design and programming coursework. I graded assignments and mentored students as they explored design practices.`,
+    hl: ['supporting 200+ students across design and programming coursework'] },
+  { date: 'Jan 2025', place: 'UX Designer + Researcher',     type: 'job',      body: `I lived my capstone dream, getting to work directly with Google Cloud. Our team was mentored by some of the nicest folks at Google Cloud, and I got to learn so much about enterprise design and research.`,
+    hl: ['getting to work directly with Google Cloud'] },
+  { date: 'May 2025', place: 'Research Assistant',  type: 'job',      body: `During summer 2025 I worked as an RA with a PhD student, Tuan-He-Lee, diving into co-design research with remote mental health support systems.\n\n And then starting Nov 2025 I have been working with a PhD student, Jeremy Faulk, creating and testing interactive systems that connect physiological sensors (e.g., heart rate monitors) with real-time lighting and sound applications (e.g., Philips Hue, Ableton Live), while logging and processing experimental data using Python.`,
+    hl: ['diving into co-design research with remote mental health support systems', 'creating and testing interactive systems', 'experimental data using Python'] },
+  { date: 'Present',  place: 'Looking for full-time roles', type: 'job', bodyPlace: true, badge: 'Open to relocation nationwide' },
 ];
 
-const skillsData = [
-  "Interaction Design", "Interdisciplinary Thinking", "Prototyping", "Mixed Methods Research", "Co-design", "Qualitative Analysis",
-  "Programming", "Community Building", "Conflict Resolution", "Leadership", "Mentorship", "Teamwork"
+/* splits body text and wraps matched phrases in a highlight span */
+function renderWithHighlights(body, hl = []) {
+  if (!hl.length) return body;
+  const escaped = hl.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const re = new RegExp(`(${escaped.join('|')})`, 'g');
+  const parts = body.split(re);
+  return parts.map((part, i) =>
+    hl.includes(part)
+      ? <span key={i} className="journey-hl">{part}</span>
+      : part
+  );
+}
+
+/* ── Polaroids (landscape:true = wider frame, 16:9-ish photo area) ── */
+const polaroids = [
+  { img: p01, rotate: '-4deg', landscape: false }, // 1 portrait
+  { img: p02, rotate: '3deg',  landscape: false }, // 2 portrait
+  { img: p03, rotate: '-2deg', landscape: true  }, // 3 landscape
+  { img: p04, rotate: '5deg',  landscape: false }, // 4 portrait
+  { img: p05, rotate: '-3deg', landscape: false }, // 5 portrait
+  { img: p06, rotate: '2deg',  landscape: false }, // 6 portrait
+  { img: p07, rotate: '-5deg', landscape: false }, // 7 portrait
+  { img: p10, rotate: '3deg',  landscape: false }, // 8 portrait (was 10)
+  { img: p08, rotate: '4deg',  landscape: true  }, // 9 landscape (was 8)
+  { img: p09, rotate: '-2deg', landscape: false }, // 10 portrait (was 9)
+  { img: p11, rotate: '-4deg', landscape: true  }, // 11 landscape
+  { img: p12, rotate: '2deg',  landscape: true  }, // 12 landscape
+  { img: p13, rotate: '-3deg', landscape: false }, // 13 portrait
+  { img: p14, rotate: '4deg',  landscape: false }, // 14 portrait
+  { img: p15, rotate: '-2deg', landscape: false }, // 15 portrait
+];
+
+/* ── Tool stickers — real icons + placeholders for the rest ── */
+const toolStickers = [
+  { src: toolFigma,    alt: 'Figma',       rotate: '-8deg', x: '15%', y: '5%',  size: 52 },
+  { src: toolMiro,     alt: 'Miro',        rotate: '6deg',  x: '62%', y: '3%',  size: 46 },
+  { src: toolNotion,   alt: 'Notion',      rotate: '-4deg', x: '38%', y: '14%', size: 44 },
+  { src: toolGithub,   alt: 'GitHub',      rotate: '9deg',  x: '72%', y: '18%', size: 48 },
+  { src: toolVue,      alt: 'Vue',         rotate: '-6deg', x: '20%', y: '28%', size: 42 },
+  { src: toolSlack,    alt: 'Slack',       rotate: '5deg',  x: '55%', y: '32%', size: 44 },
+  { src: toolR,        alt: 'R',           rotate: '-9deg', x: '10%', y: '48%', size: 40 },
+  { src: toolClaude,   alt: 'Claude Code', rotate: '7deg',  x: '68%', y: '46%', size: 46 },
+  { src: toolPython,   alt: 'Python',      rotate: '-5deg', x: '30%', y: '56%', size: 42 },
+  { src: toolWebflow,  alt: 'Webflow',     rotate: '8deg',  x: '75%', y: '62%', size: 40 },
+  { src: toolAdobe,    alt: 'Adobe CC',    rotate: '-7deg', x: '18%', y: '70%', size: 42 },
+  { src: toolDatabase, alt: 'SQL',         rotate: '6deg',  x: '58%', y: '74%', size: 40 },
+  { src: toolPhysics,  alt: 'React JS',    rotate: '-4deg', x: '40%', y: '84%', size: 38 },
+  { src: toolPicture,  alt: 'Framer',      rotate: '5deg',  x: '45%', y: '38%', size: 38 },
 ];
 
 function About() {
-  const timelineItemsRef = useRef([]);
-  const skillsRef = useRef([]);
+  const revealRefs = useRef([]);
+  const stripRef = useRef(null);
 
   useEffect(() => {
-    const observers = [];
-
-    // Timeline items observer
-    timelineItemsRef.current.forEach((item, index) => {
-      if (item) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.style.animationDelay = `${index * 0.2}s`;
-                entry.target.classList.add('animate-in');
-              }
-            });
-          },
-          { threshold: 0.1, rootMargin: '-50px' }
-        );
-        observer.observe(item);
-        observers.push(observer);
-      }
-    });
-
-    // Skills items observer
-    skillsRef.current.forEach((item, index) => {
-      if (item) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.style.animationDelay = `${index * 0.1}s`;
-                entry.target.classList.add('skill-animate-in');
-              }
-            });
-          },
-          { threshold: 0.1, rootMargin: '-30px' }
-        );
-        observer.observe(item);
-        observers.push(observer);
-      }
-    });
-
-    return () => {
-      observers.forEach(observer => observer.disconnect());
-    };
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('in'); }),
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+    revealRefs.current.forEach((el) => el && obs.observe(el));
+    return () => obs.disconnect();
   }, []);
+
+  const addReveal = (el) => { if (el && !revealRefs.current.includes(el)) revealRefs.current.push(el); };
+
+  // On hover the row becomes a scrollable, left-aligned strip with 50vw side spacers.
+  // Pin the viewport to center for a moment so the cards fan out "in place" — then the
+  // user is free to scroll. On unhover, pure CSS flexbox re-centers the 3 cards, so
+  // there's no scroll position to shift around.
+  const pinCenter = () => {
+    const el = stripRef.current;
+    if (!el) return;
+    const start = performance.now();
+    const tick = (now) => {
+      el.scrollLeft = Math.max(0, (el.scrollWidth - el.clientWidth) / 2);
+      if (now - start < 700) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+
+  // ── Drag the tool stickers in & out of the cart ──
+  const [stickerOffsets, setStickerOffsets] = useState(() => toolStickers.map(() => ({ x: 0, y: 0 })));
+  const dragInfo = useRef(null);
+
+  const onStickerDown = (e, i) => {
+    e.preventDefault();
+    const el = e.currentTarget;
+    try { el.setPointerCapture(e.pointerId); } catch { /* ignore */ }
+    el.classList.add('dragging');
+    dragInfo.current = {
+      el, i,
+      startX: e.clientX, startY: e.clientY,
+      baseX: stickerOffsets[i].x, baseY: stickerOffsets[i].y,
+      x: stickerOffsets[i].x, y: stickerOffsets[i].y,
+    };
+  };
+  const onStickerMove = (e) => {
+    const d = dragInfo.current;
+    if (!d) return;
+    d.x = d.baseX + (e.clientX - d.startX);
+    d.y = d.baseY + (e.clientY - d.startY);
+    d.el.style.transform = `translate(${d.x}px, ${d.y}px) scale(1.12)`;
+  };
+  const onStickerUp = (e) => {
+    const d = dragInfo.current;
+    if (!d) return;
+    d.el.classList.remove('dragging');
+    try { d.el.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
+    const { x, y, i } = d;
+    dragInfo.current = null;
+    setStickerOffsets((prev) => prev.map((o, idx) => (idx === i ? { x, y } : o)));
+  };
+  // Tidy up: spring every sticker back to its original scattered spot
+  const tidyUp = () => setStickerOffsets(toolStickers.map(() => ({ x: 0, y: 0 })));
+  const stickersMoved = stickerOffsets.some((o) => o.x !== 0 || o.y !== 0);
 
   return (
     <div className="about-page">
       <style>
         {`
-        @import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fjalla+One&display=swap');
 
         :root {
           --rose-pompadour: #e27396;
@@ -149,29 +189,19 @@ function About() {
           --darker-rose: #a73e5a;
           --text-primary: #2d2d2d;
           --text-secondary: #4a4a4a;
-          --sticky-yellow: #fef3c7;
-          --sticky-blue: #b3b7ee;
-          --sticky-pink: #fce7f3;
-          --sticky-green: #d1fae5;
         }
 
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-          font-family: 'Roboto', sans-serif;
+          font-family: 'DM Sans', sans-serif;
           background: linear-gradient(135deg, var(--beige) 0%, var(--mimi-pink) 30%, var(--light-blue) 70%, var(--amaranth-pink) 100%);
           color: var(--text-primary);
           line-height: 1.6;
           overflow-x: hidden;
         }
 
-        h1, h2, h3, h4, h5, h6 {
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-        }
+        h1, h2, h3, h4, h5, h6 { font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; }
 
         .about-page {
           min-height: 100vh;
@@ -179,15 +209,12 @@ function About() {
           position: relative;
         }
 
-        /* Animated Background */
         .about-page::before {
           content: '';
           position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: 
+          top: 0; left: 0;
+          width: 100%; height: 100%;
+          background:
             radial-gradient(circle at 20% 20%, rgba(226, 115, 150, 0.12) 0%, transparent 50%),
             radial-gradient(circle at 80% 80%, rgba(179, 222, 226, 0.12) 0%, transparent 50%),
             radial-gradient(circle at 40% 60%, rgba(239, 207, 227, 0.08) 0%, transparent 50%);
@@ -197,816 +224,540 @@ function About() {
         }
 
         @keyframes waveFloat {
-          0%, 100% { 
-            transform: translateY(0px) rotate(0deg) scale(1);
-            filter: blur(0px);
-          }
-          25% { 
-            transform: translateY(-30px) rotate(2deg) scale(1.05);
-            filter: blur(1px);
-          }
-          50% { 
-            transform: translateY(-20px) rotate(-1deg) scale(0.95);
-            filter: blur(0.5px);
-          }
-          75% { 
-            transform: translateY(-40px) rotate(1deg) scale(1.02);
-            filter: blur(1.5px);
-          }
+          0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); filter: blur(0px); }
+          25% { transform: translateY(-30px) rotate(2deg) scale(1.05); filter: blur(1px); }
+          50% { transform: translateY(-20px) rotate(-1deg) scale(0.95); filter: blur(0.5px); }
+          75% { transform: translateY(-40px) rotate(1deg) scale(1.02); filter: blur(1.5px); }
         }
 
-        /* Content Container */
-        .content-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 2rem;
-        }
+        .content-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
 
-        /* Header */
-        .header {
-          background: rgba(255, 255, 255, 0.3);
+        /* About section wash */
+        .about-section {
+          padding: 5rem 0 4rem;
+          background: rgba(255, 255, 255, 0.18);
+          backdrop-filter: blur(20px);
           position: relative;
-          z-index: 100;
-          border-bottom: 1px solid rgba(226, 115, 150, 0.2);
-          transition: all 0.3s ease;
         }
 
-        .header-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1.5rem 0;
-        }
+        /* Reveal animation */
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.in { opacity: 1; transform: none; }
 
-        .custom-logo {
-          height: 3.5rem;
-          width: auto;
-          object-fit: contain;
-          display: inline-block;
-          transition: transform 0.3s ease, filter 0.3s ease;
-          vertical-align: middle;
-        }
-
-        .custom-logo:hover {
-          transform: scale(1.15);
-          filter: drop-shadow(0 0 6px rgba(226, 115, 150, 0.4));
-        }
-
-        .nav-links {
-          display: flex;
-          gap: 2.5rem;
+        /* Section title — "How I Got Here": Fjalla One, pink */
+        .section-title {
           font-family: 'Fjalla One', sans-serif;
+          font-weight: 400;
+          color: var(--rose-pompadour);
+          font-size: clamp(2.4rem, 5vw, 3.6rem);
+          letter-spacing: 0.01em;
+          margin-bottom: 3rem;
         }
 
-        .nav-links a {
-          text-decoration: none;
-          color: var(--text-primary);
-          font-weight: 400;
-          font-size: 1rem;
-          transition: all 0.3s ease;
+        /* Journey — left-aligned timeline */
+        .journey { position: relative; padding-left: 2.5rem; margin-bottom: 1rem; }
+        .journey-entry {
           position: relative;
-          padding: 0.5rem 0;
+          margin-bottom: 2.75rem;
           display: flex;
           align-items: center;
-          gap: 0.3rem;
+          justify-content: space-between;
+          gap: 2.5rem;
         }
-
-        .nav-links a:hover {
-          transform: scale(1.05);
-          color: var(--rose-pompadour);
-        }
-
-        .nav-links a:after {
+        .journey-entry:last-child { margin-bottom: 0; }
+        /* dot */
+        .journey-entry::before {
           content: '';
           position: absolute;
-          width: 0;
-          height: 2px;
-          bottom: -2px;
-          left: 0;
+          left: calc(-2.5rem + 1px);
+          top: 8px;
+          width: 16px; height: 16px;
+          border-radius: 50%;
           background: var(--rose-pompadour);
-          transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          border: 4px solid #fff;
+          box-shadow: 0 2px 8px rgba(226, 115, 150, 0.4);
+          z-index: 2;
         }
-
-        .nav-links a:hover:after {
-          width: 100%;
-        }
-
-        /* About Section */
-        .about-section {
-          padding: 4rem 0;
-          background: rgba(255, 255, 255, 0.3);
-          backdrop-filter: blur(15px);
-          position: relative;
-        }
-
-        /* Intro Header */
-        .intro-header {
-          text-align: center;
-          margin-bottom: 3rem;
-          opacity: 0;
-          transform: translateY(30px);
-          animation: slideInFromTop 1s ease-out 0.3s forwards;
-        }
-
-        .intro-year-location {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: var(--text-primary);
-          margin-bottom: 1.5rem;
-          font-family: 'Fjalla One', sans-serif;
-        }
-
-        .intro-description {
-          font-size: 1.3rem;
-          color: var(--text-secondary);
-          max-width: 700px;
-          margin: 0 auto;
-          line-height: 1.7;
-          font-weight: 400;
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-        }
-
-        @keyframes slideInFromTop {
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        /* Timeline Container */
-        .timeline-container {
-          position: relative;
-          max-width: 1200px;
-          margin: 0 auto 6rem auto;
-          padding: 2rem;
-        }
-
-        /* Timeline Path */
-        .timeline-line {
+        /* connecting line to the next dot — hidden on the last entry */
+        .journey-entry::after {
+          content: '';
           position: absolute;
-          left: 50%;
-          top: 0;
-          bottom: 4rem;
-          width: 4px;
-          transform: translateX(-50%);
+          left: calc(-2.5rem + 7px);
+          top: 24px;
+          bottom: calc(-2.75rem - 8px);
+          width: 3px;
           background: linear-gradient(to bottom, var(--rose-pompadour), var(--amaranth-pink));
           border-radius: 2px;
-        }
-
-        .timeline-line::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.3), transparent);
-        }
-
-        /* Timeline Items */
-        .timeline-item {
-          position: relative;
-          margin-bottom: 4rem;
-          display: flex;
-          align-items: flex-start;
-          min-height: 300px;
-          opacity: 0;
-          transform: translateY(50px) scale(0.8);
-          transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .timeline-item:last-child {
-          margin-bottom: 0;
-        }
-
-        .timeline-item.animate-in {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-
-        /* Left Side Items */
-        .timeline-item.left {
-          justify-content: flex-end;
-          padding-right: 3rem;
-        }
-
-        .timeline-item.left .timeline-content {
-          text-align: right;
-          margin-right: 2rem;
-          transform: translateX(50px);
-        }
-
-        .timeline-item.left.animate-in .timeline-content {
-          transform: translateX(0);
-        }
-
-        /* Right Side Items */
-        .timeline-item.right {
-          justify-content: flex-start;
-          padding-left: 3rem;
-        }
-
-        .timeline-item.right .timeline-content {
-          text-align: left;
-          margin-left: 2rem;
-          transform: translateX(-50px);
-        }
-
-        .timeline-item.right.animate-in .timeline-content {
-          transform: translateX(0);
-        }
-
-        /* Watermarks */
-        .timeline-item.left::before {
-          content: attr(data-watermark);
-          position: absolute;
-          top: 50%;
-          right: 5%;
-          transform: translate(50%, -50%) rotate(15deg);
-          font-size: 12rem;
-          opacity: 0.4;
-          pointer-events: none;
           z-index: 1;
-          user-select: none;
-          color: rgba(29, 78, 216, 0.8);
-          text-shadow: 0 0 20px rgba(29, 78, 216, 0.3);
         }
-
-        .timeline-item.right::before {
-          content: attr(data-watermark);
-          position: absolute;
-          top: 50%;
-          left: 5%;
-          transform: translate(-50%, -50%) rotate(-15deg);
-          font-size: 12rem;
-          opacity: 0.4;
-          pointer-events: none;
-          z-index: 1;
-          user-select: none;
-          color: rgba(29, 78, 216, 0.8);
-          text-shadow: 0 0 20px rgba(29, 78, 216, 0.3);
-        }
-
-        /* Timeline Cards */
-        .timeline-content {
-          position: relative;
-          max-width: 420px;
-          min-height: 200px;
-          padding: 2rem 2.5rem;
-          border-radius: 25px;
-          background: var(--sticky-blue);
-          border: 3px solid rgba(100, 116, 238, 0.4);
-          box-shadow: 
-            0 4px 12px rgba(0, 0, 0, 0.15),
-            0 2px 6px rgba(0, 0, 0, 0.1);
-          transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-          overflow: hidden;
-          z-index: 5;
-          transform-origin: center;
-          transform: rotate(1deg);
-          flex-shrink: 0;
-        }
-
-        .timeline-content:hover {
-          transform: translateY(-8px) scale(1.05) rotate(0deg);
-          box-shadow: 
-            0 20px 40px rgba(0, 0, 0, 0.2),
-            0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Enhanced Timeline Dots */
-        .timeline-dot {
-          position: absolute;
-          left: 50%;
-          width: 24px;
-          height: 24px;
-          background: linear-gradient(45deg, var(--rose-pompadour), var(--deep-rose));
-          border: 5px solid white;
-          border-radius: 50%;
-          transform: translateX(-50%);
-          z-index: 10;
-          box-shadow: 
-            0 6px 20px rgba(226, 115, 150, 0.4),
-            0 0 0 3px rgba(226, 115, 150, 0.2);
-          transition: all 0.3s ease;
-        }
-
-        /* Timeline Header - Year and Location */
-        .timeline-header {
-          margin-bottom: 1.5rem;
-        }
-
-        .timeline-year {
-          font-size: 1.8rem;
-          font-weight: 700;
-          color: var(--text-primary);
-          margin-bottom: 0.5rem;
+        .journey-entry:last-child::after { display: none; }
+        .journey-text { max-width: 640px; }
+        .journey-heading {
           font-family: 'Fjalla One', sans-serif;
+          font-size: 1.35rem;
+          color: #1a1a1a;
+          letter-spacing: 0.01em;
+          margin-bottom: 0.5rem;
+          text-transform: uppercase;
           display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+        }
+        .journey-place { display: inline-flex; align-items: center; gap: 0.3rem; }
+        .journey-place svg { color: var(--rose-pompadour); flex-shrink: 0; }
+        .journey-body {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 1rem;
+          color: var(--text-secondary);
+          line-height: 1.78;
+          max-width: 640px;
+          white-space: pre-wrap;
+        }
+        .journey-hl {
+          background: rgba(198,236,201,0.55);
+          padding: 0.05em 0.28em;
+          border-radius: 2px;
+          -webkit-box-decoration-break: clone;
+          box-decoration-break: clone;
+        }
+        .journey-badge {
+          display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-        }
-
-        .timeline-location {
-          font-size: 1.1rem;
-          font-weight: 600;
-          color: var(--deep-rose);
-          margin-bottom: 1rem;
-          font-family: 'Roboto', sans-serif;
-          display: flex;
-          align-items: center;
-          gap: 0.3rem;
-          line-height: 1.3;
-          }
-          .timeline-location.job-title-right {
-            justify-content: flex-end;
-            text-align: right;
-        }
-
-        /* Regular timeline cards with year */
-        .timeline-year-regular {
-          font-size: 1.8rem;
-          font-weight: 700;
-          color: var(--text-primary);
-          margin-bottom: 0.5rem;
-          font-family: 'Fjalla One', sans-serif;
-        }
-
-        /* Quote styling */
-        .timeline-quote {
-          font-size: 1rem;
-          font-style: italic;
-          color: var(--deep-rose);
-          margin-bottom: 1rem;
-          padding: 0.5rem 0;
-          border-left: 3px solid var(--rose-pompadour);
-          padding-left: 1rem;
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-        }
-
-        /* Content Text */
-        .timeline-title {
-          font-size: 1.4rem;
-          font-weight: 700;
-          color: var(--text-primary);
-          margin-bottom: 1rem;
-          line-height: 1.3;
-          position: relative;
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-        }
-
-        .timeline-title.small-title {
-          font-size: 1rem;
-          font-weight: 500;
-          color: var(--text-secondary);
-          margin-bottom: 1rem;
-          font-style: italic;
-          opacity: 0.9;
-        }
-
-        .timeline-description {
-          color: var(--text-secondary);
-          line-height: 1.6;
+          margin-top: 0.25rem;
+          font-family: 'DM Sans', sans-serif;
           font-size: 0.95rem;
-          font-weight: 400;
-          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        }
-        .timeline-description br {
-          display: block;
-        }
-        .timeline-description br + * {
-          margin-top: 1em;
-        }
-        .timeline-description br::after {
-          content: " ";
-          display: block;
-          margin-bottom: 1em;
-        }
-
-        /* Special alignment for left position cards */
-        .timeline-item.left .timeline-location,
-        .timeline-item.left .timeline-jobTitle,
-        .timeline-item.left .timeline-quote {
-          text-align: right;
-        }
-
-        .timeline-item.left .timeline-description {
-          text-align: left;
-        }
-
-        /* Skills Section */
-        .skills-content {
-          max-width: 1000px;
-          margin: 0 auto;
-          padding: 0 2rem;
-        }
-
-        .skills-header {
-          text-align: center;
-          margin-bottom: 3rem;
-          opacity: 0;
-          transform: translateY(30px);
-          animation: slideInFromTop 1s ease-out 0.8s forwards;
-        }
-
-        .skills-header h2 {
-          font-size: 1.2rem;
-          font-weight: 400;
-          color: var(--text-primary);
-          margin-bottom: 2rem;
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-        }
-
-        .skills-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 1.5rem;
-          max-width: 800px;
-          margin: 0 auto 3rem auto;
-        }
-
-        .skill-item {
-          background: #b3b7ee;
-          backdrop-filter: blur(20px);
-          padding: 1.5rem;
-          border-radius: 20px;
-          text-align: center;
-          border: 1px solid rgba(226, 115, 150, 0.15);
-          transition: all 0.3s ease;
-          opacity: 0;
-          transform: translateY(30px) scale(0.9);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .skill-item.skill-animate-in {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-
-        .skill-item:hover {
-          transform: translateY(-5px) scale(1.05);
-          box-shadow: 0 15px 35px rgba(226, 115, 150, 0.2);
-          background: rgba(255, 255, 255, 1);
-        }
-
-        .skill-item span {
-          font-weight: 500;
-          color: var(--text-primary);
-          font-size: 1rem;
-          font-family: 'Roboto', sans-serif;
-        }
-
-        /* Skills description */
-        .skills-description {
-          text-align: center;
-          font-size: 1.2rem;
-          color: var(--text-secondary);
-          max-width: 600px;
-          margin: 0 auto 3rem auto;
-          line-height: 1.6;
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-        }
-
-        /* Reflection Text */
-        .reflection-text {
-          text-align: center;
-          font-size: 1.3rem;
-          color: var(--text-secondary);
-          line-height: 1.7;
-          margin-bottom: 2rem;
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-          max-width: 800px;
-          margin: 2rem auto;
-        }
-
-        .reflection-cta {
-          text-align: center;
-          font-size: 1.2rem;
-          color: var(--text-primary);
           font-weight: 600;
-          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-          margin-bottom: 3rem;
+          color: var(--text-primary);
+          background: rgba(255, 255, 255, 0.35);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(226, 115, 150, 0.25);
+          padding: 0.5rem 1.1rem;
+          border-radius: 9999px;
+        }
+
+        /* pulsing dot for the Present entry's badge */
+        .badge-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #22c55e;
+          flex-shrink: 0;
+          position: relative;
+        }
+        .badge-dot::after {
+          content: '';
+          position: absolute;
+          inset: -4px;
+          border-radius: 50%;
+          background: rgba(34, 197, 94, 0.4);
+          animation: badgePulse 1.8s ease-out infinite;
+        }
+        @keyframes badgePulse {
+          0%   { transform: scale(0.8); opacity: 0.8; }
+          70%  { transform: scale(2);   opacity: 0; }
+          100% { transform: scale(2);   opacity: 0; }
+        }
+
+        /* dot on the timeline for the Present entry — pink, static */
+        .journey-entry--present::before {
+          background: var(--rose-pompadour) !important;
+        }
+
+        /* ── Tool basket widget ── */
+        .journey-basket-wrap {
+          flex-shrink: 0;
+          width: 360px;
+          position: relative;
+          align-self: stretch;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          justify-content: flex-end;
+          padding-bottom: 0.5rem;
+        }
+        /* sticker zone spans the full height above the cart */
+        .sticker-zone {
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          bottom: 155px;
+          pointer-events: none;
+        }
+        /* draggable wrapper — handles position + drag transform */
+        .tool-sticker-drag {
+          position: absolute;
+          pointer-events: auto;
+          cursor: grab;
+          touch-action: none;
+          user-select: none;
+          -webkit-user-select: none;
+          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          z-index: 3;
+        }
+        .tool-sticker-drag:hover { z-index: 50; }
+        .tool-sticker-drag.dragging {
+          cursor: grabbing;
+          transition: none;
+          z-index: 200;
+        }
+        .tool-sticker {
+          position: relative;
+          display: flex; flex-direction: column; align-items: center;
+          filter: drop-shadow(0 4px 8px rgba(226, 115, 150, 0.3));
+          animation: stickerDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        .tool-sticker-drag.dragging .tool-sticker::after { opacity: 0 !important; }
+        @keyframes stickerDrop {
+          from { opacity: 0; transform: translateY(-28px) scale(0.65) rotate(var(--rot,0deg)); }
+          to   { opacity: 1; transform: translateY(0)      scale(1)    rotate(var(--rot,0deg)); }
+        }
+        .tool-sticker img {
+          object-fit: contain;
+          border-radius: 8px;
+          display: block;
+          transition: transform 0.2s ease;
+        }
+        .tool-sticker:hover img { transform: scale(1.18); }
+
+        /* CSS tooltip */
+        .tool-sticker {
+          --tooltip-text: '';
+        }
+        .tool-sticker::after {
+          content: attr(data-tooltip);
+          position: absolute;
+          bottom: calc(100% + 6px);
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(45, 45, 45, 0.88);
+          color: #fff;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.72rem;
+          font-weight: 600;
+          letter-spacing: 0.03em;
+          white-space: nowrap;
+          padding: 4px 9px;
+          border-radius: 6px;
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.18s ease;
+          z-index: 20;
+        }
+        .tool-sticker:hover::after { opacity: 1; }
+
+        /* basket image container — right-aligned to match cart position */
+        .basket-svg-wrap {
+          position: relative; z-index: 2;
+          width: 320px;
+          filter: drop-shadow(0 10px 24px rgba(226, 115, 150, 0.3));
+          margin-top: 160px;
+        }
+        .basket-svg-wrap img { width: 100%; height: auto; display: block; }
+
+        /* Cart status — hint and tidy button cross-fade in the same spot */
+        .cart-status {
+          align-self: center;
+          margin-top: 1rem;
+          z-index: 5;
+          display: grid;
+          place-items: center;
+          min-height: 2.4rem;
+        }
+        .cart-status > * { grid-area: 1 / 1; }
+
+        .cart-hint {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.85rem;
           font-style: italic;
+          color: var(--deep-rose);
+          text-align: center;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+        }
+        .cart-hint.show { opacity: 1; }
+
+        .tidy-btn {
+          border: none;
+          background: var(--rose-pompadour);
+          color: #fff;
+          font-family: 'Fjalla One', sans-serif;
+          font-size: 0.8rem;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          padding: 0.5rem 1.2rem;
+          border-radius: 999px;
+          cursor: pointer;
+          box-shadow: 0 6px 16px rgba(226, 115, 150, 0.35);
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease, transform 0.2s ease, background 0.2s ease;
+        }
+        .tidy-btn.show {
+          opacity: 1;
+          pointer-events: auto;
+        }
+        .tidy-btn:hover {
+          background: var(--deep-rose);
+          transform: translateY(-2px) scale(1.05);
+        }
+
+
+        /* Polaroid strip — horizontal scroll, no visible scrollbar */
+        .polaroid-hint {
+          text-align: center;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.9rem;
+          font-style: italic;
+          color: var(--deep-rose);
+          margin: 0.25rem 0 1.5rem;
+        }
+
+        /* ── Polaroid strip ──
+           Mobile (base): simple horizontal scroll.
+           Desktop (>=769px): full-bleed, overlapped+centered by default,
+           fans apart on hover and overflows to the window edges. */
+        .polaroids-strip-wrap {
+          margin: 4rem -2rem 0.75rem;
+          overflow-x: auto;
+          padding: 1.5rem 2rem 2.5rem;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+        }
+        .polaroids-strip-wrap::-webkit-scrollbar { display: none; }
+        .polaroids {
+          display: flex;
+          flex-wrap: nowrap;
+          gap: 1.25rem;
+          width: max-content;
+          padding: 0.5rem 0;
+          align-items: center;
+        }
+        /* Pink polaroid frame — portrait */
+        .polaroid {
+          flex-shrink: 0;
+          position: relative;
+          z-index: 1;
+          width: 190px;
+          background: #f2a8bf;
+          border-radius: 4px;
+          box-shadow: 0 8px 24px rgba(226, 115, 150, 0.3);
+          padding: 10px 10px 20px;
+          display: flex; flex-direction: column;
+          transition: transform 0.35s ease, box-shadow 0.35s ease;
+          cursor: pointer;
+        }
+        /* Pink polaroid frame — landscape */
+        .polaroid.landscape {
+          width: 270px;
+        }
+        .polaroid:hover {
+          transform: rotate(0deg) scale(1.06) translateY(-10px) !important;
+          z-index: 30;
+        }
+        /* Portrait photo: square crop */
+        .polaroid .pol-img {
+          width: 100%;
+          aspect-ratio: 1 / 1;
+          object-fit: cover;
+          border-radius: 2px;
+          display: block;
+        }
+        /* Landscape photo: wider crop */
+        .polaroid.landscape .pol-img {
+          aspect-ratio: 4 / 3;
+        }
+
+        /* Desktop: 3 polaroids by default, fan out + scroll on hover */
+        @media (min-width: 769px) {
+          .polaroids-strip-wrap {
+            width: 100vw;
+            margin: 4rem 0 0.75rem;
+            margin-left: calc(50% - 50vw);
+            overflow: visible;
+            padding: 1.5rem 0 2.5rem;
+          }
+          .polaroids {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            /* DEFAULT: flexbox centers the 3 cards — no scroll, so nothing can shift */
+            justify-content: center;
+            gap: 0;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            scrollbar-width: none;
+            padding: 1.5rem 0;
+          }
+          .polaroids::-webkit-scrollbar { display: none; }
+          /* side spacers collapse by default, expand on hover so the row is scrollable */
+          .polaroids::before,
+          .polaroids::after { content: ''; flex: 0 0 0; }
+          /* every polaroid collapsed by default... */
+          .polaroid {
+            max-width: 0;
+            opacity: 0;
+            margin-left: 0;
+            padding: 0;
+            overflow: hidden;
+            transition: max-width 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        margin-left 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        padding 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        opacity 0.45s ease,
+                        transform 0.35s ease, box-shadow 0.35s ease;
+          }
+          /* ...except the middle three, shown by default */
+          .polaroid:nth-child(6),
+          .polaroid:nth-child(7),
+          .polaroid:nth-child(8) {
+            max-width: 320px;
+            opacity: 1;
+            margin-left: 1.75rem;
+            padding: 10px 10px 20px;
+          }
+          .polaroid:nth-child(6) { margin-left: 0; }
+
+          /* HOVER: switch to a left-aligned scrollable row + full-width spacers */
+          .polaroids-strip-wrap:hover .polaroids {
+            justify-content: flex-start;
+            overflow-x: auto;
+          }
+          .polaroids-strip-wrap:hover .polaroids::before,
+          .polaroids-strip-wrap:hover .polaroids::after { flex: 0 0 50vw; }
+          .polaroids-strip-wrap:hover .polaroid {
+            max-width: 320px;
+            opacity: 1;
+            margin-left: 1.75rem;
+            padding: 10px 10px 20px;
+          }
+          .polaroids-strip-wrap:hover .polaroid:nth-child(6) { margin-left: 1.75rem; }
         }
 
         /* Footer */
-        .footer {
-          text-align: center;
-          padding: 3rem 0;
-          background: #ea9ab2;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .footer-content {
-          max-width: 650px;
-          margin: 0 auto;
-          padding: 0 2rem;
-        }
-
-        .footer-message {
-          margin-bottom: 2rem;
-        }
-
-        .footer-message h3 {
-          font-size: 1.4rem;
-          font-weight: 600;
-          color: white;
-          margin: 0;
-        }
-
-        .footer-links {
-          display: flex;
-          justify-content: center;
-          gap: 2rem;
-          margin-bottom: 2rem;
-        }
-
-        .footer-links a {
-          padding: 8px;
-          transition: all 0.3s ease;
-          text-decoration: none;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .footer-links a:hover {
-          transform: translateY(-2px) scale(1.1);
-        }
-
-        .footer-icon {
-          width: 28px;
-          height: 28px;
-          fill: white;
-          color: white;
-          transition: all 0.3s ease;
-        }
-
-        .footer-links a:hover .footer-icon {
-          filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.3));
-        }
-
-        .footer-copyright {
-          color: rgba(255, 255, 255, 0.9);
-          font-size: 0.9rem;
-          margin: 0;
-          font-weight: 400;
-        }
-
-        /* Responsive Design */
+        /* Responsive */
         @media (max-width: 768px) {
-          .timeline-line {
-            left: 2rem;
-            bottom: 6rem;
-          }
-
-          .timeline-item {
-            justify-content: flex-start !important;
-            padding-left: 4rem !important;
-            padding-right: 1rem !important;
-            align-items: center !important;
-            min-height: auto !important;
-          }
-
-          .timeline-item .timeline-content {
-            text-align: left !important;
-            margin-left: 1rem !important;
-            margin-right: 0 !important;
-            max-width: calc(100vw - 8rem) !important;
-            transform: translateX(-30px) !important;
-          }
-
-          .timeline-item.animate-in .timeline-content {
-            transform: translateX(0) !important;
-          }
-
-          .timeline-item.left .timeline-location,
-          .timeline-item.left .timeline-quote,
-          .timeline-item.left .timeline-description {
-            text-align: left !important;
-          }
-
-          .timeline-item.left::before,
-          .timeline-item.right::before {
-            font-size: 6rem;
-            left: 2rem;
-            right: auto;
-            transform: translate(-50%, -50%) rotate(-15deg);
-            opacity: 0.3;
-          }
-
-          .timeline-dot {
-            left: 2rem;
-          }
-
-          .timeline-container {
-            padding: 2rem 1rem;
-            margin-bottom: 4rem;
-          }
-
-          .timeline-content {
-            padding: 1.5rem 2rem;
-            min-height: 160px;
-            max-width: calc(100vw - 8rem) !important;
-          }
-
-          .content-container {
-            padding: 0 1rem;
-          }
+          .about-section { padding: 3rem 0; }
+          .journey { padding-left: 2rem; }
+          .journey-entry::before { left: calc(-2rem + 1px); }
+          .journey-basket-wrap { display: none; }
         }
-
         @media (max-width: 480px) {
-          .timeline-content {
-            padding: 1.5rem;
-            min-height: 140px;
-            max-width: calc(100vw - 6rem) !important;
-          }
-
-          .nav-links {
-            gap: 1rem;
-          }
-
-          .nav-links a {
-            font-size: 0.9rem;
-          }
+          .polaroid { width: 150px; }
+          .polaroid.landscape { width: 220px; }
+          .polaroids-strip-wrap { margin: 3rem -1rem 2.5rem; padding: 1rem 1rem 2rem; }
         }
         `}
       </style>
 
       {/* HEADER */}
-      <header className="header">
-        <div className="content-container">
-          <div className="header-content">
-            <a href="/">
-              <div className="logo">
-                <img src={logo} alt="Shreayaa Srinivasan Logo" className="custom-logo" />
-              </div>
-            </a>
-            <nav className="nav-links">
-              <a href="/work">WORK</a>
-              <a href="/playground">PLAYGROUND</a>
-              <a href="/about">ABOUT</a>
-              <a href="https://drive.google.com/file/d/1nE7H77ctf1esubvyXuKoVVAPnDlRB8R0/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-                RESUME
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* ABOUT SECTION */}
       <section className="about-section">
         <div className="content-container">
-          {/* Intro header */}
-          <div className="intro-header">
-            <div className="intro-year-location">
-              🗓 May 2020📍🗺️ Chennai, India
-            </div>
-            <p className="intro-description">
-              After wrapping up high school with a suitcase full of dreams in hand, I made one of the biggest and best decisions of my life. It was to pursue my education in the United States.
-              <br />
-              Little did I know, this was just the opening scene of an incredible adventure.
-            </p>
-          </div>
 
-          {/* Timeline */}
-          <div className="timeline-container">
-            <div className="timeline-line"></div>
-            
-            {timelineData.map((item, index) => (
-              <div 
-                key={index} 
-                ref={el => timelineItemsRef.current[index] = el}
-                className={`timeline-item ${item.position} ${index === 0 ? 'first-item' : ''}`}
-                data-watermark={item.watermark}
-              >
-                <div className="timeline-dot"></div>
-                <div className={`timeline-content ${item.isFirst ? 'first-card' : ''}`}>
-                  {item.isFirst ? (
-                    <div className="timeline-header">
-                      <div className="timeline-year">
-                        🗓 {item.year}
-                      </div>
-                      <div className="timeline-location">
-                        📍🗺️ {item.location}
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="timeline-year-regular">
-                        🗓 {item.year}
-                      </div>
-                      {item.location && (
-                        <div className="timeline-location job-title-right" style={{width: '100%', justifyContent: 'flex-end', display: 'flex', textAlign: 'right'}}>
-                          <span style={{textAlign: 'right', width: '100%'}}>📍🗺️ {item.location}</span>
-                        </div>
-                      )}
-                      {item.jobTitle && (
-                        <div className="timeline-location">
-                          {['Resident Assistant', 'UX Designer + Researcher'].includes(item.jobTitle) ? (
-                            <div className="timeline-location job-title-right" style={{width: '100%', justifyContent: 'flex-end', display: 'flex', textAlign: 'right'}}>
-                              <span style={{textAlign: 'right', width: '100%'}}>💼 {item.jobTitle}</span>
-                            </div>
-                          ) : (
-                            <div className="timeline-location" style={{width: '100%', justifyContent: 'flex-start', display: 'flex', textAlign: 'left'}}>
-                              <span style={{textAlign: 'left', width: '100%'}}>💼 {item.jobTitle}</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      {item.quote && (
-                        <div className="timeline-quote">
-                          "{item.quote}"
-                        </div>
-                      )}
-                    </>
-                  )}
-                  <h3 className={`timeline-title ${item.isFirst ? 'small-title' : ''}`}>
-                    {item.title}
-                  </h3>
-                  <p className="timeline-description">{item.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* How I Got Here */}
+          <h1 className="section-title reveal" ref={addReveal}>How I Got Here</h1>
 
-          {/* Skills */}
-          <div className="skills-content">
-            <div className="skills-header">
-              <h2>This incredible journey so far has taught me so much. Its safe to say it has gotten me ready for the industry and the real world 💪</h2>
-            </div>
-            
-            <div className="skills-grid">
-              {skillsData.map((skill, index) => {
-                // Calculate row index (assuming 4 columns per row)
-                const columns = 4;
-                const row = Math.floor(index / columns);
-                let bgColor;
-                if (row === 0) bgColor = '#b3dee2';
-                else if (row === 1) bgColor = '#b3b7ee';
-                else bgColor = '#e27396';
-
-                return (
-                  <div
-                    key={index}
-                    ref={el => skillsRef.current[index] = el}
-                    className="skill-item"
-                    style={{ background: bgColor }}
-                  >
-                    <span>{skill}</span>
+          <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'flex-start' }}>
+            <div className="journey" style={{ flex: 1 }}>
+              {journey.map((item, i) => (
+                <div className={`journey-entry reveal${item.date === 'Present' ? ' journey-entry--present' : ''}`} ref={addReveal} key={i}>
+                  <div className="journey-text">
+                    <h3 className="journey-heading">
+                      {item.date}{!item.bodyPlace && ','}
+                      {!item.bodyPlace && (
+                        <span className="journey-place">
+                          {item.type === 'location' ? <MapPin size={16} /> : <Briefcase size={16} />}
+                          {item.place}
+                        </span>
+                      )}
+                    </h3>
+                    {item.bodyPlace && <p className="journey-body">{item.place}</p>}
+                    {item.body && <p className="journey-body">{renderWithHighlights(item.body, item.hl)}</p>}
+                    {item.badge && (
+                      <span className="journey-badge">
+                        <span className="badge-dot" />
+                        {item.badge}
+                      </span>
+                    )}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
 
-            <p className="skills-description">
-              Talk to me about cooking, hiking, music, and more!
-            </p>
-
-            {/* Reflection */}
-            <p className="reflection-cta">
-              Want to be part of the next chapter? Let's connect!
-            </p>
+            {/* Basket + stickers widget */}
+            <div className="journey-basket-wrap reveal" ref={addReveal}>
+              {/* stickers scattered above the basket */}
+              <div className="sticker-zone">
+                {toolStickers.map((s, i) => (
+                  <div
+                    key={i}
+                    className="tool-sticker-drag"
+                    style={{
+                      left: s.x, top: s.y,
+                      transform: `translate(${stickerOffsets[i].x}px, ${stickerOffsets[i].y}px)`,
+                    }}
+                    onPointerDown={(e) => onStickerDown(e, i)}
+                    onPointerMove={onStickerMove}
+                    onPointerUp={onStickerUp}
+                    onPointerCancel={onStickerUp}
+                  >
+                    <div
+                      className="tool-sticker"
+                      data-tooltip={s.alt}
+                      style={{ '--rot': s.rotate, animationDelay: `${i * 0.07}s` }}
+                    >
+                      <img src={s.src} alt={s.alt} draggable={false} style={{ width: s.size, height: s.size }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Pink 3D shopping cart */}
+              <div className="basket-svg-wrap">
+                <img src={cartImg} alt="Skills shopping cart" style={{width:'100%',height:'auto',display:'block'}}/>
+              </div>
+              <div className="cart-status">
+                <p className={`cart-hint${stickersMoved ? '' : ' show'}`}>
+                  Try adding the tools into the tool cart
+                </p>
+                <button
+                  className={`tidy-btn${stickersMoved ? ' show' : ''}`}
+                  onClick={tidyUp}
+                >
+                  ✦ Reorient
+                </button>
+              </div>
+            </div>
           </div>
+
+          {/* Polaroid photo strip */}
+          <div
+            className="polaroids-strip-wrap reveal"
+            ref={addReveal}
+            onMouseEnter={pinCenter}
+          >
+            <div className="polaroids" ref={stripRef}>
+              {polaroids.map((p, i) => (
+                <div
+                  className={`polaroid${p.landscape ? ' landscape' : ''}`}
+                  style={{ transform: `rotate(${p.rotate})` }}
+                  key={i}
+                >
+                  <img src={p.img} alt={`Memory ${i + 1}`} className="pol-img" />
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="polaroid-hint reveal" ref={addReveal}>hover to see more memories</p>
+
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-message">
-            <h3>Like my work? Hit me up with a hi 😊</h3>
-          </div>
-          
-          <div className="footer-links">
-            <a href="https://www.linkedin.com/in/shreayaa-nadagudy-srinivasan-b41a271a8/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-              </svg>
-            </a>
-            <a href="https://medium.com/@shreayaasrini" target="_blank" rel="noopener noreferrer" title="Medium">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/>
-              </svg>
-            </a>
-            <a href="https://dribbble.com/shreayaa-srinivasan" target="_blank" rel="noopener noreferrer" title="Dribbble">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 24C5.385 24 0 18.615 0 12S5.385 0 12 0s12 5.385 12 12-5.385 12-12 12zm10.12-10.358c-.35-.11-3.17-.953-6.384-.438 1.34 3.684 1.887 6.684 1.992 7.308 2.3-1.555 3.936-4.02 4.395-6.87zm-6.115 7.808c-.153-.9-.75-4.032-2.19-7.77l-.066.02c-5.79 2.015-7.86 6.025-8.04 6.4 1.74 1.36 3.92 2.166 6.29 2.166 1.42 0 2.77-.29 4-.816zm-11.62-2.58c.232-.4 3.045-5.055 8.332-6.765.135-.045.27-.084.405-.12-.26-.585-.54-1.167-.832-1.74C7.17 11.775 2.206 11.71 1.756 11.7l-.004.312c0 2.633.998 5.037 2.634 6.855zm-2.42-8.955c.46.008 4.683.026 9.477-1.248-1.698-3.018-3.53-5.558-3.8-5.928-2.868 1.35-5.01 3.99-5.676 7.17zM9.6 2.052c.282.38 2.145 2.914 3.822 6 3.645-1.365 5.19-3.44 5.373-3.702-1.81-1.61-4.19-2.586-6.795-2.586-.825 0-1.63.1-2.4.285zm10.335 3.483c-.218.29-1.935 2.493-5.724 4.04.24.49.47.985.68 1.486.08.18.15.36.22.53 3.41-.43 6.8.26 7.14.33-.02-2.42-.88-4.64-2.31-6.38z"/>
-              </svg>
-            </a>
-            <a href="mailto:shreayaasrini@gmail.com" title="Email">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.904.732-1.636 1.636-1.636h1.818L12 11.73l8.545-7.909h1.818c.904 0 1.636.732 1.636 1.636 Z"/>
-              </svg>
-            </a>
-          </div>
-
-          <p className="footer-copyright">Designed + Coded with 🩷 by Shreayaa Srinivasan © 2025 </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

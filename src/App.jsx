@@ -1,100 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, ArrowUpRight, Mail, Linkedin, Dribbble } from 'lucide-react';
-import logo from './assets/general/profile.png';
+import SiteHeader from './components/SiteHeader';
+import SiteFooter from './components/SiteFooter';
 import shreayaaPhoto from './assets/general/heroImage.png';
+import vennImage from './assets/general/Venn.png';
+import trophy from './assets/general/trophy.png';
 import About from './About';
-import Playground from './playground';
 import Work from './work';
+import { projects } from './projects';
 import GoogleCloudCaseStudy from './google';
 import IthacaSoap from './ithacaSoap';
 import RoutesToRoots from './routestoroots';
 import IName from './iName';
 import EcoCartCaseStudy from './ecoCart';
 import RShinyCaseStudy from './rShiny';
+import Garden from './Garden';
 
-const designPrinciples = [
-  {
-    description: (
-      <>
-        <q>I ground design in mixed-method research.</q>
-        <br />
-        <br />
-        I’ve used methods like cultural probes, diary studies and auto-ethnography to uncover hidden user needs. 
-      </>
-    ),
-  },
-  {
-    description: (
-      <>
-        <q>I align user needs with business goals.</q>
-        <br />
-        <br />
-        By prioritizing features based on real pain points and feasibility, I create designs that are purposeful and effective.
-      </>
-    ),
-  },
-  {
-    description: (
-      <>
-        <q>I design realistic solutions informed by code.</q>
-        <br />
-        <br />
-        With a CS background, I prototype with technical constraints in mind and easily collaborate with engineers.
-      </>
-    ),
-  },
-  {
-    description: (
-      <>
-        <q>I design for social impact.</q>
-        <br />
-        <br />
-        My work focuses on inclusive experiences that foster belonging, respect identity, and make everyday interactions more equitable.
-      </>
-    ),
-  },
-  {
-    description: (
-      <>
-        <q>I believe in iteration as progress.</q>
-        <br />
-        <br />
-        Through repeated cycles of design and feedback, I’ve seen how even small changes improve usability.
-      </>
-    ),
-  },
-  {
-    description: (
-      <>
-        <q>I have mentored and taught students.</q>
-        <br />
-        <br />
-        As a teaching specialist, I’ve supported 250+ students in design practices that helped them grow with confidence.
-      </>
-    ),
-  },
-];
+// designPrinciples removed — carousel was removed per request
 
 
 function HomePage() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  
   const [typewriterIndex, setTypewriterIndex] = useState(0);
   const [typewriterText, setTypewriterText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-
 const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], []);
 
-  // Auto-advance carousel
-  useEffect(() => {
-    if (!isPaused) {
-      const interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % designPrinciples.length);
-      }, 4000);
-      return () => clearInterval(interval);
-    }
-  }, [isPaused]);
+
+
 
   // Typewriter effect
   useEffect(() => {
@@ -116,12 +49,67 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
     return () => clearTimeout(timeout);
   }, [typewriterText, isDeleting, typewriterIndex, words]);
 
+  // Project rows animation (moved from Work.jsx)
+  const projectRefs = useRef([]);
+
+  useEffect(() => {
+    const observers = [];
+    projectRefs.current.forEach((project, index) => {
+      if (project) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.style.animationDelay = `${index * 0.2}s`;
+                entry.target.classList.add('animate-in');
+              }
+            });
+          },
+          { threshold: 0.1, rootMargin: '-100px' }
+        );
+        observer.observe(project);
+        observers.push(observer);
+      }
+    });
+
+    return () => {
+      observers.forEach(observer => observer.disconnect());
+    };
+  }, []);
+
+  // Scroll to #work when HomePage mounts or when the hash changes
+  useEffect(() => {
+    // Only scroll when a click set a session flag. This prevents automatic
+    // scrolling on refresh while preserving deep-link behavior when clicked.
+    const scrollFromSession = () => {
+      const target = sessionStorage.getItem('scrollTo');
+      if (target) {
+        const el = document.getElementById(target);
+        if (el) {
+          setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 50);
+        }
+        sessionStorage.removeItem('scrollTo');
+      }
+    };
+
+    scrollFromSession();
+    window.addEventListener('storage', scrollFromSession);
+    return () => window.removeEventListener('storage', scrollFromSession);
+  }, []);
+
+  const handleProjectClick = (caseStudyUrl) => {
+    window.location.href = caseStudyUrl;
+  };
+
   return (
     <div className="app">
       <style>
         {`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
         :root {
           --rose-pompadour: #e27396;
@@ -133,6 +121,10 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           --darker-rose: #a73e5a;
           --text-primary: #2d2d2d;
           --text-secondary: #4a4a4a;
+        }
+
+        .dm-sans {
+          font-family: 'DM Sans', sans-serif;
         }
 
         * {
@@ -236,74 +228,6 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           51%, 100% { opacity: 0; }
         }
 
-        .header {
-          background: rgba(255, 255, 255, 0.3);
-          position: relative;
-          z-index: 100;
-          border-bottom: 1px solid rgba(226, 115, 150, 0.2);
-          transition: all 0.3s ease;
-        }
-
-        .header-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1.5rem 0;
-        }
-
-        .custom-logo {
-          height: 3.5rem;
-          width: auto;
-          object-fit: contain;
-          display: inline-block;
-          transition: transform 0.3s ease, filter 0.3s ease;
-          vertical-align: middle;
-        }
-
-        .custom-logo:hover {
-          transform: scale(1.15);
-          filter: drop-shadow(0 0 6px rgba(226, 115, 150, 0.4));
-        }
-
-        .nav-links {
-          display: flex;
-          gap: 2.5rem;
-          font-family: 'Fjalla One', sans-serif;
-        }
-
-        .nav-links a {
-          text-decoration: none;
-          color: var(--text-primary);
-          font-weight: 400;
-          font-size: 1rem;
-          transition: all 0.3s ease;
-          position: relative;
-          padding: 0.5rem 0;
-          display: flex;
-          align-items: center;
-          gap: 0.3rem;
-        }
-
-        .nav-links a:hover {
-          transform: scale(1.05);
-          color: var(--rose-pompadour);
-        }
-
-        .nav-links a:after {
-          content: '';
-          position: absolute;
-          width: 0;
-          height: 2px;
-          bottom: -2px;
-          left: 0;
-          background: var(--rose-pompadour);
-          transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .nav-links a:hover:after {
-          width: 100%;
-        }
-
         .hero {
           padding: 6rem 0;
           min-height: 85vh;
@@ -314,7 +238,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
 
         .hero-content {
           display: flex;
-          align-items: flex-end;
+          align-items: center;
           justify-content: space-between;
           gap: 4rem;
           width: 100%;
@@ -324,6 +248,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           flex: 1;
           max-width: 650px;
           animation: slideInLeft 1s ease-out;
+          position: relative;
         }
 
         @keyframes slideInLeft {
@@ -339,26 +264,34 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
 
         .hero-text h1 {
           font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-          font-size: clamp(2.5rem, 5.5vw, 4rem);
+          font-size: clamp(2rem, 4.5vw, 3.5rem);
           font-weight: 700;
           margin-bottom: 2rem;
-          line-height: 1.1;
+          line-height: 1;
           color: var(--text-primary);
           letter-spacing: -0.02em;
+        }
+        /* keeps "Hi, I'm Shreayaa." on a single line at all viewport sizes */
+        .greeting-line {
+          white-space: nowrap;
+          display: block;
         }
 
         .typewriter {
           color: var(--rose-pompadour);
           position: relative;
+          display: block;
+          margin-top: -0.4em;
         }
 
         .hero-text p {
-          font-size: 1.4rem;
+          font-size: 1.1rem; /* ~17.6px */
           color: var(--text-secondary);
           margin-bottom: 3rem;
           max-width: 550px;
-          line-height: 1.7;
+          line-height: 1.6;
           font-weight: 400;
+          font-family: 'DM Sans', sans-serif;
         }
 
         .hero-buttons {
@@ -445,23 +378,34 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           }
         }
 
+        .hero-photo {
+          /* enable 3D space for a subtle tilt effect */
+          perspective: 1200px;
+        }
+
         .hero-photo img {
-          width: clamp(320px, 32vw, 420px);
+          width: clamp(350px, 35vw, 480px);
           height: auto;
           object-fit: contain;
           object-position: center bottom;
-          transition: all 0.4s ease;
+          transition: transform 450ms cubic-bezier(0.2, 0.9, 0.2, 1), box-shadow 350ms ease;
+          transform-origin: center center;
+          will-change: transform;
+          display: block;
         }
 
-        .hero-photo img:hover {
-          transform: scale(1.05);
+        /* Zoom on hover/focus */
+        .hero-photo img:hover,
+        .hero-photo img:focus {
+          transform: scale(1.08);
+          box-shadow: 0 20px 50px rgba(45,45,45,0.14);
         }
 
         .skills {
           overflow: hidden;
           background: rgba(255, 255, 255, 0.7);
           backdrop-filter: blur(20px);
-          padding: 2rem 0;
+          padding: 1.2rem 0; /* reduced height */
           position: relative;
           border-top: 1px solid rgba(226, 115, 150, 0.1);
           border-bottom: 1px solid rgba(226, 115, 150, 0.1);
@@ -469,7 +413,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
 
         .skills-container {
           position: relative;
-          height: 50px;
+          height: 44px; /* slightly shorter */
           display: flex;
           align-items: center;
         }
@@ -484,26 +428,32 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
         }
 
         .skills-strip span {
-          font-weight: 500;
-          font-size: 1.1rem;
-          color: var(--text-primary);
-          padding: 1rem 2rem;
-          background: rgba(255, 255, 255, 0.95);
-          border-radius: 50px;
-          backdrop-filter: blur(15px);
-          border: 1px solid rgba(226, 115, 150, 0.15);
-          transition: all 0.3s ease;
-          font-family: 'Roboto', sans-serif;
-          box-shadow: 0 4px 15px rgba(226, 115, 150, 0.1);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 1rem;
+          color: var(--text-secondary);
+          padding: 0.4rem 1.1rem; /* tighter vertical padding */
+          background: rgba(255, 255, 255, 0.98);
+          border-radius: 9999px !important;
+          -webkit-border-radius: 9999px !important;
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          background-clip: padding-box;
+          border: 1px solid rgba(226, 115, 150, 0.12);
+          transition: transform 180ms ease, box-shadow 180ms ease;
+          font-family: 'DM Sans', sans-serif;
+          box-shadow: 0 6px 18px rgba(226, 115, 150, 0.09);
           flex-shrink: 0;
           min-width: max-content;
+          line-height: 1;
+          transform: translateZ(0);
         }
 
         .skills-strip span:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(226, 115, 150, 0.2);
-          background: rgba(255, 255, 255, 1);
-          border-color: var(--rose-pompadour);
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 12px 30px rgba(226, 115, 150, 0.14);
         }
 
         @keyframes scrollSkills {
@@ -515,12 +465,12 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           background: rgba(255, 255, 255, 0.4);
           backdrop-filter: blur(20px);
           position: relative;
-          padding: 7rem 0;
+          padding: 7rem 0 0;
         }
 
         .design-content {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           justify-content: flex-start;
           gap: 5rem;
         }
@@ -552,11 +502,20 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
         }
 
         .design-left p {
-          font-size: 1.3rem;
+          font-size: 1.1rem;
           color: var(--text-secondary);
-          line-height: 1.8;
+          line-height: 1.6;
           font-weight: 400;
           margin-bottom: 1.5rem;
+          font-family: 'DM Sans', sans-serif;
+        }
+
+        .soft-green-highlight {
+          background: rgba(179, 226, 175, 0.45);
+          padding: 0 0.15em;
+          border-radius: 0.25em;
+          box-decoration-break: clone;
+          -webkit-box-decoration-break: clone;
         }
 
         .design-gallery {
@@ -577,6 +536,24 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           display: flex;
           align-items: center;
           justify-content: center;
+          transform: translateY(8px); /* nudge down a bit */
+        }
+
+        .gallery-image {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .gallery-image img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+          border-radius: 0;
+          box-shadow: none;
+          background: transparent;
         }
 
         .gallery-card {
@@ -705,70 +682,212 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           transform: scale(1.1);
         }
 
-        .footer {
-          text-align: center;
-          padding: 3rem 0;
-          background: #ea9ab2;
+        /* Work Section (copied from Work.jsx) */
+        .work-section {
+          padding: 4rem 0;
           position: relative;
-          overflow: hidden;
         }
 
-        .footer-content {
-          max-width: 650px;
-          margin: 0 auto;
-          padding: 0 2rem;
-        }
-
-        .footer-message {
-          margin-bottom: 2rem;
-        }
-
-        .footer-message h3 {
-          font-size: 1.4rem;
-          font-weight: 600;
-          color: white;
-          margin: 0;
-        }
-
-        .footer-links {
+        .project-row {
           display: flex;
-          justify-content: center;
-          gap: 2rem;
-          margin-bottom: 2rem;
+          align-items: center;
+          gap: 4rem;
+          margin-bottom: 6rem;
+          min-height: 500px;
+          cursor: pointer;
+          position: relative;
+          opacity: 0;
+          transform: translateY(60px) scale(0.95);
+          transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .footer-links a {
-          padding: 8px;
-          transition: all 0.3s ease;
-          text-decoration: none;
+        .work-section .project-row:last-child {
+          margin-bottom: 0;
+        }
+
+        .project-row.animate-in {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        .project-row.reverse {
+          flex-direction: row-reverse;
+        }
+
+        .project-row:hover {
+          transform: translateY(-5px) scale(1.01);
+        }
+
+        .mockup-side {
+          flex: 1;
           display: flex;
           align-items: center;
           justify-content: center;
+          min-height: 500px;
+          position: relative;
         }
 
-        .footer-links a:hover {
-          transform: translateY(-2px) scale(1.1);
+        .mockup-image-wrapper {
+          width: 100%;
+          height: 500px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .footer-icon {
-          width: 28px;
-          height: 28px;
-          fill: white;
-          color: white;
+        .project-row:hover .mockup-image-wrapper {
+          transform: translateY(-8px) scale(1.02);
+        }
+
+        .mockup-image-wrapper.laptop .mockup-image {
+          width: 100%;
+          height: auto;
+          max-height: 100%;
+          object-fit: contain;
+          object-position: center;
+        }
+
+        .mockup-image-wrapper.mobile .mockup-image {
+          height: 90%;
+          width: auto;
+          max-width: 100%;
+          object-fit: contain;
+          object-position: center;
+        }
+
+        .mockup-image {
+          image-rendering: high-quality;
+          transition: all 0.6s ease;
+          border-radius: 12px;
+        }
+
+        .mockup-placeholder {
+          color: #999;
+          font-size: 1.2rem;
+          text-align: center;
+          padding: 3rem;
+          border: 2px dashed rgba(153, 153, 153, 0.3);
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.1);
+          width: 80%;
+          height: 350px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+
+        .content-side {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 2rem 0;
+        }
+
+        .project-title {
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: var(--text-primary);
+          margin-bottom: 1.5rem;
+          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+          line-height: 1.2;
+          transition: all 0.4s ease;
+          transform: translateX(20px);
+          opacity: 0.8;
+        }
+
+        .project-row.animate-in .project-title {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        .project-row:hover .project-title {
+          color: var(--rose-pompadour);
+          transform: translateX(5px);
+        }
+
+        .project-description {
+          font-size: 1.1rem; /* match hero ~17.6px */
+          color: var(--text-secondary);
+          line-height: 1.6;
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 400;
+          transition: all 0.4s ease;
+          transform: translateX(20px);
+          opacity: 0.8;
+        }
+
+        .project-row.animate-in .project-description {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        .tool-logos-row {
+          display: flex;
+          gap: 0.75rem;
+          margin-top: 1rem;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+
+        .tool-logo {
+          width: 48px !important;
+          height: 48px !important;
+          object-fit: contain;
+          padding: 0;
+          display: inline-block;
+        }
+
+        .project-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-top: 1rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .project-tag {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.7rem;
+          color: var(--text-secondary);
+          background: rgba(226, 115, 150, 0.08);
+          border: 1px solid rgba(226, 115, 150, 0.25);
+          padding: 0.25rem 0.65rem;
+          border-radius: 9999px;
           transition: all 0.3s ease;
         }
 
-        .footer-links a:hover .footer-icon {
-          filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.3));
+        .project-row:hover .project-tag {
+          background: rgba(226, 115, 150, 0.15);
+          border-color: rgba(226, 115, 150, 0.4);
         }
 
-        .footer-copyright {
-          color: rgba(255, 255, 255, 0.9);
-          font-size: 0.9rem;
-          margin: 0;
+        .award-badge {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-top: 1.5rem;
+        }
+
+        .award-icon {
+          width: 48px;
+          height: 48px;
+          flex-shrink: 0;
+        }
+
+        .award-text {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 1rem;
+          color: #4a4a4a;
+          line-height: 1.5;
           font-weight: 400;
         }
-          
+
+
+
         @media (max-width: 768px) {
           .hero-content {
             flex-direction: column;
@@ -807,40 +926,9 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
             height: 260px;
           }
 
-          .footer-message h3 {
-            font-size: 1.2rem;
-          }
-
-          .footer-links {
-            gap: 1.5rem;
-          }
-
-          .nav-links {
-            gap: 1.5rem;
-          }
-
-          .nav-links a {
-            font-size: 0.9rem;
-          }
         }
 
         @media (max-width: 480px) {
-          .content-container {
-            padding: 0 1rem;
-          }
-          
-          .header-content {
-            padding: 1rem 0;
-          }
-          
-          .nav-links {
-            gap: 1rem;
-          }
-          
-          .nav-links a {
-            font-size: 0.9rem;
-          }
-
           .design-gallery {
             height: 360px;
           }
@@ -858,10 +946,6 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           .skills-strip span {
             font-size: 0.9rem;
             padding: 0.7rem 1.2rem;
-          }
-
-          .custom-logo {
-            height: 3.5rem;
           }
 
           .design-content {
@@ -882,42 +966,12 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
             line-height: 1.5;
           }
 
-          .footer-message h3 {
-            font-size: 1.1rem;
-          }
-
-          .footer-links {
-            gap: 1rem;
-          }
-
-          .footer-icon {
-            width: 24px;
-            height: 24px;
-          }
         }
         `}
       </style>
 
       {/* HEADER */}
-      <header className="header">
-        <div className="content-container">
-          <div className="header-content">
-            <a href="/">
-              <div className="logo">
-                <img src={logo} alt="Shreayaa Srinivasan Logo" className="custom-logo" />
-              </div>
-            </a>
-            <nav className="nav-links">
-              <a href="/work">WORK</a>
-              <a href="/playground">PLAYGROUND</a>
-              <a href="/about">ABOUT</a>
-              <a href="https://drive.google.com/file/d/1Qhppc22iG-1iBeIK1sT6zLXWCVWqF0U0/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-                RESUME
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* HERO SECTION */}
       <section className="hero">
@@ -925,14 +979,15 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           <div className="hero-content">
             <div className="hero-text">
               <h1>
-                Hi, I'm Shreayaa.{" "}
+                <span className="greeting-line">Hi, I'm Shreayaa.</span>
+                <br />
                 <span className="typewriter">
                   I'm a {typewriterText}
                   <span style={{borderRight: '2px solid', animation: 'blink 1s infinite'}}>|</span>
                 </span>
               </h1>
-              <p>
-                I'm a user experience designer who is curious about how design influences human behavior in the real world. I design thoughtful user experiences that balance user needs with business strategy.
+              <p className="dm-sans">
+                I love to design with empathy and purpose. I'm passionate about making complex things feel simple and smooth.
               </p>
             </div>
             <div className="hero-image">
@@ -945,19 +1000,21 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
       </section>
 
       {/* FIXED SKILLS STRIP */}
-      <section className="skills">
-        <div className="skills-container">
-          <div className="skills-strip">
-            {[
-              ...["Prototyping", "Wireframing", "Interaction Design", "Accessibility", "Python",
-                 "Javascript", "CSS", "HTML", "Figma", "Framer", "Webflow", "Sketch", "R Studio",
-                 "Problem Solving", "Leadership", "User Research", "Design Systems", "A/B Testing"],
-              ...["Prototyping", "Wireframing", "Interaction Design", "Accessibility", "Python",
-                 "Javascript", "CSS", "HTML", "Figma", "Framer", "Webflow", "Sketch", "R Studio",
-                 "Problem Solving", "Leadership", "User Research", "Design Systems", "A/B Testing"]
-            ].map((skill, idx) => (
-              <span key={idx}>{skill}</span>
-            ))}
+      <section className="skills" style={{position: 'relative'}}>
+        <div className="skills-inner">
+          <div className="skills-container">
+            <div className="skills-strip">
+              {[
+                ...["Prototyping", "Wireframing", "Interaction Design", "Accessibility", "Python",
+                   "Javascript", "CSS", "HTML", "Figma", "Framer", "Webflow", "Sketch", "R Studio",
+                   "Problem Solving", "Leadership", "User Research", "Design Systems", "A/B Testing"],
+                ...["Prototyping", "Wireframing", "Interaction Design", "Accessibility", "Python",
+                   "Javascript", "CSS", "HTML", "Figma", "Framer", "Webflow", "Sketch", "R Studio",
+                   "Problem Solving", "Leadership", "User Research", "Design Systems", "A/B Testing"]
+              ].map((skill, idx) => (
+                <span key={idx}>{skill}</span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -969,80 +1026,78 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
             <div className="design-left">
               <h2>Who am I as a designer?</h2>
               <p>
-                Coming from a background in both computer science and user experience design, I bring a unique blend of technical expertise and design thinking. I design with empathy and purpose.
+                I come from a background in Information Science, Computer Science and Psychology which puts me in this unique position where I <span className="soft-green-highlight">understand the technical capabilities, the human side, and the UX side of things.</span> So I'm keen on designing interactions and products that people actually find delightful. 
               </p>
               <p>
-                I am comfortable working closely with researchers, engineers, and stakeholders to shape ideas into products people trust and enjoy.
+                These experiences make me very <span className="soft-green-highlight">comfortable working closely with researchers, engineers, and stakeholders</span> and understand the feasibility and implications of my design decisions.
               </p>
             </div>
             
             <div className="design-gallery">
-              <div 
-                className="gallery-container"
-                onMouseEnter={() => setIsPaused(true)}
-                onMouseLeave={() => setIsPaused(false)}
-              >
-                {designPrinciples.map((principle, index) => {
-                  let className = 'gallery-card';
-                  
-                  if (index === currentSlide) {
-                    className += ' active';
-                  } else if (index === (currentSlide - 1 + designPrinciples.length) % designPrinciples.length) {
-                    className += ' prev';
-                  } else if (index === (currentSlide + 1) % designPrinciples.length) {
-                    className += ' next';
-                  }
-                  
-                  return (
-                    <div key={index} className={className}>
-                      <div className="card-content">
-                        <h3>{principle.title}</h3>
-                        <p style={{marginBottom: '1.2rem'}}>
-                          {principle.description}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="gallery-container">
+                <div className="gallery-image">
+                  <img src={vennImage} alt="Venn diagram: Computer Science, User Experience, Psychology — Human-Computer Interaction Designer" />
+                </div>
               </div>
             </div>
+
+          {/* close design-content then insert projects so they share background */}
           </div>
+          <section id="work" className="work-section">
+            {projects.filter(p => ![4,5,6].includes(p.id)).map((project, index) => (
+                <div
+                  key={project.id}
+                  id={project.id === 1 ? 'google-cloud' : undefined}
+                  ref={el => projectRefs.current[index] = el}
+                  className={`project-row ${index % 2 === 1 ? 'reverse' : ''}`}
+                  onClick={() => handleProjectClick(project.caseStudyUrl)}
+                >
+                  <div className="mockup-side">
+                    <div className={`mockup-image-wrapper ${project.imageType}`}>
+                      {project.image ? (
+                        <img src={project.image} alt={`${project.title} mockup`} className="mockup-image" />
+                      ) : (
+                        <div className="mockup-placeholder">
+                          <div>Project Mockup Image</div>
+                          <small>({project.imageType} mockup)</small>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="content-side">
+                    <h2 className="project-title">{project.title}</h2>
+                    {project.tags && (
+                      <div className="project-tags">
+                        {project.tags.map((tag, idx) => (
+                          <span key={idx} className="project-tag">{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                    <p className="project-description">{project.description}</p>
+                    {project.toolLogos && (
+                      <div className="tool-logos-row">
+                        {project.toolLogos.map((logoSrc, idx) => (
+                          <img key={idx} src={logoSrc} alt={`tool-${idx}`} className="tool-logo" />
+                        ))}
+                      </div>
+                    )}
+                    {project.award && (
+                      <div className="award-badge">
+                        <img src={trophy} alt="Award" className="award-icon" />
+                        <p className="award-text">{project.award}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+          </section>
         </div>
       </section>
 
-       {/* FOOTER */}
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-message">
-            <h3>Like my work? Hit me up with a hi 😊</h3>
-          </div>
-          
-          <div className="footer-links">
-            <a href="https://www.linkedin.com/in/shreayaa-nadagudy-srinivasan-b41a271a8/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-              </svg>
-            </a>
-            <a href="https://medium.com/@shreayaasrini" target="_blank" rel="noopener noreferrer" title="Medium">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/>
-              </svg>
-            </a>
-            <a href="https://dribbble.com/shreayaa-srinivasan" target="_blank" rel="noopener noreferrer" title="Dribbble">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 24C5.385 24 0 18.615 0 12S5.385 0 12 0s12 5.385 12 12-5.385 12-12 12zm10.12-10.358c-.35-.11-3.17-.953-6.384-.438 1.34 3.684 1.887 6.684 1.992 7.308 2.3-1.555 3.936-4.02 4.395-6.87zm-6.115 7.808c-.153-.9-.75-4.032-2.19-7.77l-.066.02c-5.79 2.015-7.86 6.025-8.04 6.4 1.74 1.36 3.92 2.166 6.29 2.166 1.42 0 2.77-.29 4-.816zm-11.62-2.58c.232-.4 3.045-5.055 8.332-6.765.135-.045.27-.084.405-.12-.26-.585-.54-1.167-.832-1.74C7.17 11.775 2.206 11.71 1.756 11.7l-.004.312c0 2.633.998 5.037 2.634 6.855zm-2.42-8.955c.46.008 4.683.026 9.477-1.248-1.698-3.018-3.53-5.558-3.8-5.928-2.868 1.35-5.01 3.99-5.676 7.17zM9.6 2.052c.282.38 2.145 2.914 3.822 6 3.645-1.365 5.19-3.44 5.373-3.702-1.81-1.61-4.19-2.586-6.795-2.586-.825 0-1.63.1-2.4.285zm10.335 3.483c-.218.29-1.935 2.493-5.724 4.04.24.49.47.985.68 1.486.08.18.15.36.22.53 3.41-.43 6.8.26 7.14.33-.02-2.42-.88-4.64-2.31-6.38z"/>
-              </svg>
-            </a>
-            <a href="mailto:shreayaasrini@gmail.com" title="Email">
-              <svg className="footer-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.904.732-1.636 1.636-1.636h1.818L12 11.73l8.545-7.909h1.818c.904 0 1.636.732 1.636 1.636 Z"/>
-              </svg>
-            </a>
-          </div>
 
-          <p className="footer-copyright">Designed + Coded with 🩷 by Shreayaa Srinivasan © 2025 </p>
-        </div>
-      </footer>
+       {/* FOOTER */}
+      <SiteFooter />
     </div>
   );
 }
@@ -1053,7 +1108,6 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
-        <Route path="/playground" element={<Playground />} /> 
         <Route path="/work" element={<Work />} /> 
         <Route path="/google-cloud-case-study" element={<GoogleCloudCaseStudy />} /> 
         <Route path="/ithaca-soap-case-study" element={<IthacaSoap />} />
@@ -1061,6 +1115,7 @@ function App() {
         <Route path="/ecocart-case-study" element={<EcoCartCaseStudy />} />
         <Route path="/iname-case-study" element={<IName />} />
         <Route path="/rshiny-case-study" element={<RShinyCaseStudy />} />
+        <Route path="/garden" element={<Garden />} />
       </Routes>
     </Router>
   );

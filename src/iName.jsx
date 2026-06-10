@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
-import logo from './assets/general/profile.png';
+import SiteHeader from './components/SiteHeader';
 import iNameMockup from './assets/iname/iName.png';
 import storyboard1 from './assets/iname/storyboard1.png';
 import storyboard2 from './assets/iname/storyboard2.png';
@@ -1087,25 +1087,7 @@ function IName() {
       </style>
 
       {/* HEADER */}
-      <header className="header">
-        <div className="content-container">
-          <div className="header-content">
-            <a href="/">
-              <div className="logo">
-                <img src={logo} alt="Shreayaa Srinivasan Logo" className="custom-logo" />
-              </div>
-            </a>
-            <nav className="nav-links">
-              <a href="/work">WORK</a>
-              <a href="/playground">PLAYGROUND</a>
-              <a href="/about">ABOUT</a>
-              <a href="https://drive.google.com/file/d/1nE7H77ctf1esubvyXuKoVVAPnDlRB8R0/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-                RESUME
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* MAIN CONTENT */}
       <div className="case-study-layout">
@@ -1186,7 +1168,7 @@ function IName() {
 
       {/* NAVIGATION BUTTONS */}
       <div className="nav-buttons fade-in-up">
-        <a href="/work" className="nav-button primary fade-in-left">
+        <a href="/#work" className="nav-button primary fade-in-left">
           View My Other Work
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M7 17L17 7M17 7H7M17 7V17"/>
@@ -1230,7 +1212,7 @@ function IName() {
             </a>
           </div>
 
-          <p className="footer-copyright">Designed + Coded with ❤️ by Shreayaa Srinivasan © 2025</p>
+          <p className="footer-copyright">Designed + Coded with ❤️ by Shreayaa Srinivasan © 2026</p>
         </div>
       </footer>
     </div>
