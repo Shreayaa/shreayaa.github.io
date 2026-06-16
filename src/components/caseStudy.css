@@ -2,27 +2,34 @@
 
 /* ── Stacking iMessage cards (CardStack) ──────────────────────── */
 
-/* Card frame — hugs the cards so the section stays compact */
-.pain-stack-sticky {
+/* Tall track the pinned frame scrolls through — its height (set inline =
+   frame height + N × SCROLL_PER_CARD) is the distance the cards scrub across */
+.pain-stack-track {
   position: relative;
+  width: 100%;
+  margin: 1.25rem 0 0;
+}
+
+/* Card frame — pinned at the viewport centre via sticky while the track
+   scrolls past it (`top` is set inline so the frame lands dead-centre) */
+.pain-stack-sticky {
+  position: sticky;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  /* top margin tuned so the stack sits visually centred between the
-     text above and the section divider below */
-  margin: 1.25rem 0 0;
   z-index: 2;
   pointer-events: none;
 }
 
-/* Card container — full-width; clips the off-screen slide horizontally
-   only, so card shadows fade out naturally at the bottom */
+/* Card container — full-width. No clipping here: a mixed
+   overflow-x:clip / overflow-y:visible chops the card shadows in Safari
+   (it clips both axes), giving a hard bottom edge. The off-screen slide-in
+   is contained by .cs-root's overflow-x: clip at the page level instead. */
 .pain-stack-outer {
   position: relative;
   width: 100%;
   height: 200px;
-  overflow-x: clip;
-  overflow-y: visible;
+  overflow: visible;
   pointer-events: auto;
 }
 
@@ -40,8 +47,13 @@
   background: white;
   border-radius: 20px;
   box-shadow: 0 8px 36px rgba(0,0,0,0.1);
-  /* no transition — transforms are scrubbed directly by scroll */
+  /* progress tracks scroll position; this short ease smooths the discrete
+     steps a mouse wheel or arrow key produces so every input glides alike */
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
   will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pain-stack-card { transition: none; }
 }
 
 /* left: number only */
@@ -66,6 +78,63 @@
   font-family: 'DM Sans', sans-serif;
   font-size: 0.95rem;
   line-height: 1.55;
+}
+
+/* ── Pain-point chat (static iMessage-style — current CardStack) ─── */
+
+.pain-chat {
+  max-width: 620px;
+  margin: 2rem auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+/* one message row: avatar + bubble, alternating sides */
+.pain-chat-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  max-width: 84%;
+}
+.pain-chat-row.is-left  { align-self: flex-start; }
+.pain-chat-row.is-right { align-self: flex-end; flex-direction: row-reverse; }
+
+/* small round number badge, like a chat avatar */
+.pain-chat-avatar {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fjalla One', sans-serif;
+  font-size: 0.78rem;
+  background: rgba(226, 115, 150, 0.15);
+  color: #c2557a;
+}
+
+.pain-chat-bubble {
+  margin: 0;
+  padding: 0.85rem 1.2rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  border-radius: 20px;
+}
+/* received (left): light bubble, tail bottom-left */
+.pain-chat-row.is-left .pain-chat-bubble {
+  background: #fff;
+  color: #2d2d2d;
+  border-bottom-left-radius: 5px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+/* sent (right): brand pink, tail bottom-right */
+.pain-chat-row.is-right .pain-chat-bubble {
+  background: #e27396;
+  color: #fff;
+  border-bottom-right-radius: 5px;
 }
 
 /* ── Impact count-up boxes (CountBox) ─────────────────────────── */
@@ -133,11 +202,15 @@
 /* ── Responsive ───────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
-  .pain-stack-sticky { margin: 1rem 0 0; }
+  .pain-stack-track  { margin: 1rem 0 0; }
   .pain-stack-outer  { height: 180px; }
   .pain-stack-card   { padding: 1.1rem 1.4rem; gap: 1.25rem; max-width: 96%; }
   .psc-num           { font-size: 1.5rem; min-width: 36px; }
   .psc-bubble        { font-size: 0.85rem; }
   .impact-box        { width: 90px; height: 90px; }
   .impact-num        { font-size: 2.2rem; }
+  /* chat: roomier bubbles, smaller avatar */
+  .pain-chat-row     { max-width: 92%; gap: 0.45rem; }
+  .pain-chat-avatar  { width: 30px; height: 30px; font-size: 0.72rem; }
+  .pain-chat-bubble  { font-size: 0.9rem; padding: 0.75rem 1rem; }
 }

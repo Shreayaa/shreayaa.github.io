@@ -188,6 +188,9 @@ export default function GoogleCloudCaseStudy() {
           max-width: 1120px;
           margin: 0 auto;
           padding: 0;
+          /* allow the grid track to shrink below children's min-content so a
+             single nowrap/wide element can't blow the column past the viewport */
+          min-width: 0;
         }
 
         .cs-page-layout {
@@ -975,6 +978,7 @@ export default function GoogleCloudCaseStudy() {
           .cs-sidebar       { display: none; }
           .cs-content       { max-width: none; }
           .cs-oneliner       { font-size: 1.2rem; white-space: normal; }
+          .cs-solution-oneliner { font-size: 1.2rem; white-space: normal; }
           .cs-meta           { grid-template-columns: repeat(2, 1fr); }
           .cs-meta-tools     { grid-column: span 1; }
           .impact-row        { grid-template-columns: repeat(2, 1fr); }
@@ -992,6 +996,7 @@ export default function GoogleCloudCaseStudy() {
           .cs-content       { max-width: none; }
           .cs-bold-intro    { font-size: 1.15rem; }
           .cs-oneliner      { font-size: 18px; white-space: normal; }
+          .cs-solution-oneliner { font-size: 18px; white-space: normal; }
           .cs-meta-row-top  { grid-template-columns: 1fr; }
           .cs-meta-row-mid  { grid-template-columns: 1fr; }
           .cs-meta-row-tools{ grid-template-columns: 1fr; }

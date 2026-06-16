@@ -44,28 +44,46 @@ const DEPTH = [
   { y: 37, scale: 0.950, rotate:  0.8 },
 ];
 
-const SCROLL_PER_CARD = 700; // px of wheel/touch travel each card's slide-in occupies
-const MAX_TICK        = 120; // cap per-event delta so trackpad momentum can't blast through
-const LOCK_BAND       = 260; // how close to the lock spot input capture engages
+const SCROLL_PER_CARD = 1000; // px of page scroll each card's slide-in occupies
 
-/* Scroll-locked stack: the section is only as tall as the card frame.
-   When it reaches the middle of the viewport with cards still left to
-   animate (in the direction being scrolled), wheel/touch input is
-   captured and scrubbed into card progress instead of page scroll.
-   Once the stack is done (either end), input passes through and the
-   page scrolls on normally. `cards` is an array of { num, msg }. */
+/* ── Pain-point messages: static iMessage-style chat ───────────────
+   TEMPORARY. Renders the cards as a plain, static chat — bubbles
+   alternating left/right — so the section ships without the janky
+   scroll-scrubbed interaction. The interactive version is preserved
+   below as `CardStackScroll`; point the pages back at it when it's
+   ready. `cards` is { num, msg }[]. */
 export function CardStack({ cards }) {
+  return (
+    <div className="pain-chat" role="list">
+      {cards.map((card, i) => (
+        <div key={card.num} role="listitem" className={`pain-chat-row ${i % 2 === 0 ? 'is-left' : 'is-right'}`}>
+          <span className="pain-chat-avatar" aria-hidden="true">{card.num}</span>
+          <p className="pain-chat-bubble">{card.msg}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* Scroll-scrubbed stacking cards — preserved for later, NOT currently used.
+
+   The card frame is pinned at the centre of the viewport with position:sticky
+   while a tall track scrolls past it; each card slides in as you scroll deeper.
+   Progress is read straight from the *scroll position* — not from wheel/touch
+   deltas — so it behaves identically for a trackpad, a mouse wheel, the arrow
+   keys, Page Up/Down and the scrollbar. A short CSS transition on each card
+   (see caseStudy.css) smooths the discrete jumps a mouse wheel or keypress
+   produces, so every input glides like a trackpad. `cards` is { num, msg }[]. */
+export function CardStackScroll({ cards }) {
   const [progress, setProgress] = React.useState(0); // continuous 0..N
-  const [frameH, setFrameH] = React.useState(null);  // frame hugs the cards
-  const progressRef = React.useRef(0);
-  const touchYRef = React.useRef(0);
-  const wrapRef = React.useRef(null);
+  const [frameH, setFrameH]     = React.useState(null); // frame hugs the cards
+  const trackRef = React.useRef(null);
 
   // size the frame to the tallest card plus the stack's downward spread,
   // so there's no dead space below the stack (card height varies per page)
   React.useEffect(() => {
     const measure = () => {
-      const els = wrapRef.current?.querySelectorAll('.pain-stack-card');
+      const els = trackRef.current?.querySelectorAll('.pain-stack-card');
       if (!els?.length) return;
       const tallest = Math.max(...[...els].map((el) => el.offsetHeight));
       setFrameH(tallest + DEPTH[DEPTH.length - 1].y + 6);
@@ -76,73 +94,28 @@ export function CardStack({ cards }) {
   }, [cards]);
 
   React.useEffect(() => {
-    const setP = (v) => {
-      const clamped = Math.max(0, Math.min(cards.length, v));
-      progressRef.current = clamped;
-      setProgress(clamped);
-    };
-
-    /* Decide whether this scroll delta should be captured: only near
-       the lock spot (frame vertically centred in the viewport), and
-       only with cards still to play in that direction. Returns the
-       offset to the lock spot so the frame can be nudged exactly
-       on-centre when capture engages. */
-    const claim = (deltaY) => {
-      const el = wrapRef.current;
-      if (!el) return null;
-      const r = el.getBoundingClientRect();
-      const lock = (window.innerHeight - r.height) / 2;
-      const p = progressRef.current;
-      const ok = deltaY > 0
-        ? r.top <= lock + 1 && r.top > lock - LOCK_BAND && p < cards.length
-        : r.top >= lock - 1 && r.top < lock + LOCK_BAND && p > 0;
-      return ok ? r.top - lock : null;
-    };
-
-    const tick = (dy) => Math.sign(dy) * Math.min(Math.abs(dy), MAX_TICK);
-
-    const capture = (e, dy) => {
-      const off = claim(dy);
-      if (off === null) return false;
-      e.preventDefault();
-      if (Math.abs(off) > 1) window.scrollBy(0, off); // settle exactly on-centre
-      setP(progressRef.current + tick(dy) / SCROLL_PER_CARD);
-      return true;
-    };
-
-    const onWheel = (e) => capture(e, e.deltaY);
-
-    const onTouchStart = (e) => {
-      touchYRef.current = e.touches[0].clientY;
-    };
-    const onTouchMove = (e) => {
-      const dy = touchYRef.current - e.touches[0].clientY;
-      if (capture(e, dy)) touchYRef.current = e.touches[0].clientY;
-    };
-
-    /* Fallback for scrollbar drags / keyboard paging, which bypass
-       wheel events: once the section is carried well past the lock
-       band without being scrubbed, settle the cards to the matching
-       end so they're never stranded. */
-    const onScroll = () => {
-      const el = wrapRef.current;
+    // Map scroll position → progress (0..N). Driven purely by where the page is
+    // scrolled, so trackpad, mouse wheel, arrow keys and the scrollbar all feed
+    // the exact same value; the CSS transition on the cards does the smoothing.
+    // The lock point is derived from the track's own height (frame + scrubLen,
+    // set inline), so it's self-consistent without a separate frame measurement.
+    const scrubLen = cards.length * SCROLL_PER_CARD;
+    const update = () => {
+      const el = trackRef.current;
       if (!el) return;
-      const r = el.getBoundingClientRect();
-      const lock = (window.innerHeight - r.height) / 2;
-      if (r.top < lock - LOCK_BAND) setP(cards.length);
-      else if (r.top > lock + LOCK_BAND) setP(0);
+      const H = el.offsetHeight;
+      if (H <= scrubLen) return;                              // tall height not applied yet
+      const top0 = (window.innerHeight - H + scrubLen) / 2;   // y where the frame is centred
+      const raw  = (top0 - el.getBoundingClientRect().top) / SCROLL_PER_CARD;
+      setProgress(Math.max(0, Math.min(cards.length, raw)));
     };
 
-    window.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
-    window.addEventListener('touchmove', onTouchMove, { passive: false });
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    update(); // settle correctly on mount / when already scrolled into view
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
     return () => {
-      window.removeEventListener('wheel', onWheel);
-      window.removeEventListener('touchstart', onTouchStart);
-      window.removeEventListener('touchmove', onTouchMove);
-      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
     };
   }, [cards.length]);
 
@@ -160,9 +133,14 @@ export function CardStack({ cards }) {
     };
   };
 
+  // track height = frame + the scroll distance the cards scrub across
+  const trackStyle  = frameH ? { height: `${frameH + cards.length * SCROLL_PER_CARD}px` } : undefined;
+  // pin the frame so its centre lands at the viewport centre
+  const stickyStyle = frameH ? { top: `calc(50vh - ${frameH / 2}px)` } : undefined;
+
   return (
-    <div ref={wrapRef} style={{ position: 'relative' }}>
-      <div className="pain-stack-sticky">
+    <div ref={trackRef} className="pain-stack-track" style={trackStyle}>
+      <div className="pain-stack-sticky" style={stickyStyle}>
         <div className="pain-stack-outer" style={frameH ? { height: `${frameH}px` } : undefined}>
           {cards.map((card, i) => {
             // t: this card's own slide-in progress (0→1), scrubbed by scroll
