@@ -488,10 +488,11 @@ export default function RoutesToRoots() {
           margin-bottom: 1.5rem;
         }
         .cs-highlight {
-          background: rgba(198,236,201,0.55);
-          padding: 0.12rem 0.5rem;
-          border-radius: 9999px;
-          display: inline-block;
+          background: rgba(152, 223, 138, 0.5);
+          padding: 0.08em 0.16em;
+          border-radius: 0.5em 0.28em 0.45em 0.3em;
+          box-decoration-break: clone;
+          -webkit-box-decoration-break: clone;
         }
         .cs-placeholder {
           background: rgba(255,255,255,.4);
@@ -1106,13 +1107,13 @@ export default function RoutesToRoots() {
               And somewhere between orientation week and finals season, a lot of them quietly stop doing the things that they grew up loving, traditional cooking, dance, music, art, the cultural hobbies that tied them to home.
             </p>
             <p>
-              It is because they struggle to maintain these hobbies while navigating the demands of university life. Because there was no time, no space, no community, and honestly, no easy way to find any of those things.
+              It is because they <span className="cs-highlight">struggle to maintain these hobbies while navigating the demands of university life.</span> Because there was no time, no space, no community, and honestly, no easy way to find any of those things.
             </p>
             <p>
-              Now you might think that there are cultural clubs one could join. But they're not built for this. To join most cultural clubs, you need to already be skilled. They're not designed for the student who grew up folding dumplings with their grandmother, or who learned Bharatanatyam basics as a child but never trained formally, someone who loves the practice, feels culturally grounded by it, and wants to get back to it, but has no entry point. There was no one holistic system where you could pursue your own cultural hobby at your own level, stumble into someone else's tradition, and feel welcome doing either. That gap is what we were designing for.
+              Now you might think that there are cultural clubs one could join. But they're not built for this. To join <span className="cs-highlight">most cultural clubs, you need to already be skilled.</span> They're not designed for the student who grew up folding dumplings with their grandmother, or who learned Bharatanatyam basics as a child but never trained formally, someone who loves the practice, feels culturally grounded by it, and wants to get back to it, but has no entry point. There was <span className="cs-highlight">no one holistic system where you could pursue your own cultural hobby at your own level</span>, stumble into someone else's tradition, and feel welcome doing either. That gap is what we were designing for.
             </p>
             <p>
-              Over the course of this project, we ran contextual interviews, designed and distributed physical cultural probe kits to participants, conducted an autoethnographic research within our research team, synthesized everything through affinity mapping and personas, and landed on a design concept. This case study is a gist of my process throughout this project.
+              Over the course of this project, we ran <span className="cs-highlight">contextual interviews</span>, designed and distributed <span className="cs-highlight">physical cultural probe kits</span> to participants, conducted an <span className="cs-highlight">autoethnographic research</span> within our research team, synthesized everything through <span className="cs-highlight">affinity mapping and personas</span>, and landed on a <span className="cs-highlight">design concept</span>. This case study is a gist of my process throughout this project.
             </p>
           </div>
         </div>

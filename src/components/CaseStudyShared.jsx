@@ -46,21 +46,84 @@ const DEPTH = [
 
 const SCROLL_PER_CARD = 1000; // px of page scroll each card's slide-in occupies
 
-/* ── Pain-point messages: static iMessage-style chat ───────────────
-   TEMPORARY. Renders the cards as a plain, static chat — bubbles
-   alternating left/right — so the section ships without the janky
-   scroll-scrubbed interaction. The interactive version is preserved
-   below as `CardStackScroll`; point the pages back at it when it's
-   ready. `cards` is { num, msg }[]. */
+/* ── Pain-point messages: animated iMessage-style chat ─────────────
+   Renders the cards as a live chat that "types itself out". When the
+   section scrolls into view, each bubble first shows a bouncing
+   three-dot typing indicator, then the message drops into its place —
+   one bubble after another, alternating sides. Respects
+   prefers-reduced-motion (shows everything at once). The scroll-scrubbed
+   stacking version is preserved below as `CardStackScroll`.
+   `cards` is { num, msg }[]. */
 export function CardStack({ cards }) {
+  const [visibleCount, setVisibleCount] = useState(0); // messages fully shown
+  const [typing, setTyping]             = useState(false); // dots showing for next
+  const [started, setStarted]           = useState(false);
+  const rootRef = useRef(null);
+
+  // Begin the conversation once it scrolls into view (skip for reduced motion).
+  // Uses a scroll-position check rather than IntersectionObserver so it fires
+  // reliably regardless of the container's (initially tiny) height.
+  useEffect(() => {
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { setVisibleCount(cards.length); return; }
+    const inView = () => {
+      const el = rootRef.current;
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      return r.top < window.innerHeight * 0.85 && r.bottom > 0;
+    };
+    if (inView()) { setStarted(true); return; }
+    const onScroll = () => {
+      if (inView()) { setStarted(true); window.removeEventListener('scroll', onScroll); }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [cards.length]);
+
+  // Show the typing dots, then drop in the message — one bubble at a time.
+  // The effect re-runs after each reveal, so the initial delay doubles as the
+  // pause between messages. Typing time scales a little with message length.
+  useEffect(() => {
+    if (!started || visibleCount >= cards.length) return;
+    const typeMs = Math.min(1500, 600 + cards[visibleCount].msg.length * 15);
+    let revealTimer;
+    const startTimer = setTimeout(() => {
+      setTyping(true);
+      revealTimer = setTimeout(() => {
+        setTyping(false);
+        setVisibleCount((c) => c + 1);
+      }, typeMs);
+    }, visibleCount === 0 ? 300 : 450);
+    return () => { clearTimeout(startTimer); clearTimeout(revealTimer); };
+  }, [started, visibleCount, cards]);
+
+  // Render revealed messages plus, while typing, the next row as dots. The
+  // typing row keeps the same key as its message, so the avatar stays put and
+  // only the bubble swaps from dots to text.
+  const shown = visibleCount + (typing ? 1 : 0);
+
   return (
-    <div className="pain-chat" role="list">
-      {cards.map((card, i) => (
-        <div key={card.num} role="listitem" className={`pain-chat-row ${i % 2 === 0 ? 'is-left' : 'is-right'}`}>
-          <span className="pain-chat-avatar" aria-hidden="true">{card.num}</span>
-          <p className="pain-chat-bubble">{card.msg}</p>
-        </div>
-      ))}
+    <div className="pain-chat" role="list" ref={rootRef}>
+      {cards.slice(0, shown).map((card, i) => {
+        const side     = i % 2 === 0 ? 'is-left' : 'is-right';
+        const isTyping = typing && i === visibleCount;
+        return (
+          <div
+            key={card.num}
+            role="listitem"
+            className={`pain-chat-row ${side}${isTyping ? ' pain-chat-row--typing' : ''}`}
+          >
+            <span className="pain-chat-avatar" aria-hidden="true">{card.num}</span>
+            {isTyping ? (
+              <div className="pain-chat-bubble pain-chat-typing" aria-label="typing">
+                <span></span><span></span><span></span>
+              </div>
+            ) : (
+              <p className="pain-chat-bubble">{card.msg}</p>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

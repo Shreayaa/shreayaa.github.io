@@ -315,9 +315,9 @@ function About() {
           white-space: pre-wrap;
         }
         .journey-hl {
-          background: rgba(198,236,201,0.55);
-          padding: 0.05em 0.28em;
-          border-radius: 2px;
+          background: rgba(152, 223, 138, 0.5);
+          padding: 0.08em 0.16em;
+          border-radius: 0.5em 0.28em 0.45em 0.3em;
           -webkit-box-decoration-break: clone;
           box-decoration-break: clone;
         }

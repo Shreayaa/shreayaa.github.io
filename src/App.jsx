@@ -5,6 +5,7 @@ import SiteFooter from './components/SiteFooter';
 import shreayaaPhoto from './assets/general/heroImage.png';
 import vennImage from './assets/general/Venn.png';
 import trophy from './assets/general/trophy.png';
+import gillyPhoto from './assets/general/Gilly.jpeg';
 import About from './About';
 import Work from './work';
 import { projects } from './projects';
@@ -52,6 +53,10 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
   // Project rows animation (moved from Work.jsx)
   const projectRefs = useRef([]);
 
+  // Testimonial scroll reveal
+  const testimonialRef = useRef(null);
+  const [testimonialInView, setTestimonialInView] = useState(false);
+
   useEffect(() => {
     const observers = [];
     projectRefs.current.forEach((project, index) => {
@@ -75,6 +80,22 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
     return () => {
       observers.forEach(observer => observer.disconnect());
     };
+  }, []);
+
+  useEffect(() => {
+    const el = testimonialRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTestimonialInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2, rootMargin: '-80px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   // Scroll to #work when HomePage mounts or when the hash changes
@@ -106,6 +127,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
       <style>
         {`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
@@ -511,11 +533,11 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
         }
 
         .soft-green-highlight {
-          background: rgba(179, 226, 175, 0.45);
-          padding: 0 0.15em;
-          border-radius: 0.25em;
-          box-decoration-break: clone;
+          background: rgba(152, 223, 138, 0.5);
+          padding: 0.08em 0.16em;
+          border-radius: 0.5em 0.28em 0.45em 0.3em;
           -webkit-box-decoration-break: clone;
+          box-decoration-break: clone;
         }
 
         .design-gallery {
@@ -886,6 +908,121 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           font-weight: 400;
         }
 
+        /* Testimonial Section (under Routes to Roots) */
+        .testimonial-section {
+          max-width: 1000px;
+          margin: 0 auto;
+          padding: 5rem 0 7rem;
+          opacity: 0;
+          transform: translateY(40px);
+          transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                      transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .testimonial-section.in-view {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        .testimonial-card {
+          display: flex;
+          align-items: flex-start;
+          gap: 3.5rem;
+          padding: 3rem 0;
+          border-top: 1px solid rgba(45, 45, 45, 0.12);
+          border-bottom: 1px solid rgba(45, 45, 45, 0.12);
+        }
+
+        .testimonial-quote-side {
+          flex: 1;
+        }
+
+        .testimonial-quote {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 1.15rem;
+          line-height: 1.75;
+          color: var(--text-primary);
+          margin-bottom: 1.75rem;
+        }
+
+        .tq-highlight {
+          background: rgba(152, 223, 138, 0.5);
+          padding: 0.08em 0.16em;
+          border-radius: 0.5em 0.28em 0.45em 0.3em;
+          -webkit-box-decoration-break: clone;
+          box-decoration-break: clone;
+        }
+
+        .testimonial-attribution {
+          display: flex;
+          flex-direction: column;
+          gap: 0.15rem;
+        }
+
+        .testimonial-name {
+          font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+          font-weight: 700;
+          font-size: 1.15rem;
+          color: var(--text-primary);
+        }
+
+        .testimonial-role {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.95rem;
+          color: var(--text-secondary);
+        }
+
+        .testimonial-photo-side {
+          flex-shrink: 0;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          margin-top: 0.5rem;
+        }
+
+        .testimonial-photo {
+          width: 160px;
+          height: 160px;
+          border-radius: 50%;
+          object-fit: cover;
+          background: linear-gradient(135deg, var(--mimi-pink), var(--light-blue));
+          border: 4px solid rgba(255, 255, 255, 0.6);
+          box-shadow: 0 12px 30px rgba(197, 85, 119, 0.15);
+        }
+
+        /* Hand-drawn annotation pointing from the photo */
+        .testimonial-annotation {
+          position: absolute;
+          top: calc(100% + 0.5rem);
+          right: 0;
+          display: flex;
+          align-items: flex-start;
+          gap: 0.35rem;
+          width: 262px;
+          pointer-events: none;
+        }
+
+        .testimonial-arrow {
+          flex-shrink: 0;
+          width: 64px;
+          height: auto;
+          margin-top: -4px;
+          color: #1a1a1a;
+        }
+
+        .testimonial-annotation-text {
+          flex-shrink: 0;
+          width: 190px;
+          font-family: 'Shadows Into Light Two', cursive;
+          font-weight: 400;
+          font-size: 1.2rem;
+          line-height: 1.2;
+          text-align: center;
+          color: #1f1f1f;
+          transform: rotate(-3deg);
+        }
+
 
 
         @media (max-width: 768px) {
@@ -924,6 +1061,32 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
             width: 90%;
             min-width: 280px;
             height: 260px;
+          }
+
+          .testimonial-card {
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 2rem;
+            text-align: center;
+            padding: 2.5rem 0;
+          }
+
+          .testimonial-attribution {
+            align-items: center;
+          }
+
+          .testimonial-photo-side {
+            align-items: center;
+            margin-top: 0;
+          }
+
+          .testimonial-photo {
+            width: 130px;
+            height: 130px;
+          }
+
+          .testimonial-annotation {
+            display: none;
           }
 
         }
@@ -1091,6 +1254,39 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
                   </div>
                 </div>
               ))}
+          </section>
+
+          {/* TESTIMONIAL (under Routes to Roots) */}
+          <section
+            ref={testimonialRef}
+            className={`testimonial-section${testimonialInView ? ' in-view' : ''}`}
+            aria-label="Testimonial"
+          >
+            <div className="testimonial-card">
+              <div className="testimonial-quote-side">
+                <p className="testimonial-quote">
+                  &ldquo;I have witnessed her journey and growth toward becoming an exceptional
+                  UX professional. Her projects were exemplary &mdash; literally &mdash;{' '}
+                  <span className="tq-highlight">I have been using her projects as examples in the following semesters</span>. Her designs
+                  were grounded in systematic, in-depth user research that followed ethical
+                  principles. Shreayaa is a remarkably effective and{' '}
+                  <span className="tq-highlight">proactive collaborator</span>. She was
+                  the de-facto driver behind the group projects, with{' '}
+                  <span className="tq-highlight">high work ethic and endless positive can-do attitude</span>. I have no doubt that Shreayaa will make a
+                  strong, long-lasting impact in any organization that she will join.&rdquo;
+                </p>
+                <div className="testimonial-attribution">
+                  <span className="testimonial-name">&mdash; Gilly Leshed</span>
+                  <span className="testimonial-role">Teaching Professor, Cornell University</span>
+                </div>
+              </div>
+              <div className="testimonial-photo-side">
+                <img src={gillyPhoto} alt="Gilly Leshed" className="testimonial-photo" />
+                <span className="testimonial-annotation-text">
+                  Words from one of the most talented professors I learnt from
+                </span>
+              </div>
+            </div>
           </section>
         </div>
       </section>

@@ -501,9 +501,9 @@ export default function GoogleCloudCaseStudy() {
           margin-bottom: 1.5rem;
         }
         .cs-highlight {
-          background: rgba(198,236,201,0.55); /* pastel green */
-          padding: 0.05em 0.28em;
-          border-radius: 2px; /* sharp-ish edges, not a pill */
+          background: rgba(152, 223, 138, 0.5);
+          padding: 0.08em 0.16em;
+          border-radius: 0.5em 0.28em 0.45em 0.3em;
           -webkit-box-decoration-break: clone;
           box-decoration-break: clone;
         }
