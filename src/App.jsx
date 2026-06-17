@@ -309,11 +309,49 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
         .hero-text p {
           font-size: 1.1rem; /* ~17.6px */
           color: var(--text-secondary);
-          margin-bottom: 3rem;
+          margin-bottom: 1.75rem;
           max-width: 550px;
           line-height: 1.6;
           font-weight: 400;
           font-family: 'DM Sans', sans-serif;
+        }
+
+        /* "Open to full-time roles" availability pill (matches the About page badge) */
+        .hero-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          background: rgba(255, 255, 255, 0.35);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(226, 115, 150, 0.25);
+          padding: 0.5rem 1.1rem;
+          border-radius: 9999px;
+        }
+        .hero-badge-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #22c55e;
+          flex-shrink: 0;
+          position: relative;
+        }
+        .hero-badge-dot::after {
+          content: '';
+          position: absolute;
+          inset: -4px;
+          border-radius: 50%;
+          background: rgba(34, 197, 94, 0.4);
+          animation: heroBadgePulse 1.8s ease-out infinite;
+        }
+        @keyframes heroBadgePulse {
+          0%   { transform: scale(0.8); opacity: 0.8; }
+          70%  { transform: scale(2);   opacity: 0; }
+          100% { transform: scale(2);   opacity: 0; }
         }
 
         .hero-buttons {
@@ -1152,6 +1190,10 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
               <p className="dm-sans">
                 I love to design with empathy and purpose. I'm passionate about making complex things feel simple and smooth.
               </p>
+              <span className="hero-badge">
+                <span className="hero-badge-dot" />
+                Open to full-time roles
+              </span>
             </div>
             <div className="hero-image">
               <div className="hero-photo">

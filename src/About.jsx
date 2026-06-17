@@ -54,7 +54,7 @@ const journey = [
     hl: ['getting to work directly with Google Cloud'] },
   { date: 'May 2025', place: 'Research Assistant',  type: 'job',      body: `During summer 2025 I worked as an RA with a PhD student, Tuan-He-Lee, diving into co-design research with remote mental health support systems.\n\n And then starting Nov 2025 I have been working with a PhD student, Jeremy Faulk, creating and testing interactive systems that connect physiological sensors (e.g., heart rate monitors) with real-time lighting and sound applications (e.g., Philips Hue, Ableton Live), while logging and processing experimental data using Python.`,
     hl: ['diving into co-design research with remote mental health support systems', 'creating and testing interactive systems', 'experimental data using Python'] },
-  { date: 'Present',  place: 'Looking for full-time roles', type: 'job', bodyPlace: true, badge: 'Open to relocation nationwide' },
+  { date: 'Present',  place: 'Actively looking for full-time roles', type: 'job', bodyPlace: true, badge: 'Open to relocation nationwide' },
 ];
 
 /* splits body text and wraps matched phrases in a highlight span */
@@ -137,41 +137,32 @@ function About() {
     requestAnimationFrame(tick);
   };
 
-  // ── Drag the tool stickers in & out of the cart ──
-  const [stickerOffsets, setStickerOffsets] = useState(() => toolStickers.map(() => ({ x: 0, y: 0 })));
-  const dragInfo = useRef(null);
+  // ── Tap a tool sticker to make it fall into the cart ──
+  // Each entry is null (still scattered) or { tx, ty, spin, z } — the px offset
+  // from the sticker's scattered spot to its resting place inside the cart.
+  const [placed, setPlaced] = useState(() => toolStickers.map(() => null));
+  const placedOrder = useRef(0);
+  const cartRef = useRef(null);
 
-  const onStickerDown = (e, i) => {
-    e.preventDefault();
-    const el = e.currentTarget;
-    try { el.setPointerCapture(e.pointerId); } catch { /* ignore */ }
-    el.classList.add('dragging');
-    dragInfo.current = {
-      el, i,
-      startX: e.clientX, startY: e.clientY,
-      baseX: stickerOffsets[i].x, baseY: stickerOffsets[i].y,
-      x: stickerOffsets[i].x, y: stickerOffsets[i].y,
-    };
+  const dropInCart = (e, i) => {
+    if (placed[i] || !cartRef.current) return;
+    const sRect = e.currentTarget.getBoundingClientRect();
+    const cRect = cartRef.current.getBoundingClientRect();
+    const order = placedOrder.current++;
+    // Tools fall all the way to the basket floor, then pile upward as more land
+    const jitterX = (Math.random() - 0.5) * cRect.width * 0.26;
+    const jitterY = (Math.random() - 0.5) * 10;
+    const pileUp  = Math.min(order * 6, 40);
+    const targetX = cRect.left + cRect.width * 0.36 + jitterX;
+    const targetY = cRect.top  + cRect.height * 0.56 - pileUp + jitterY;
+    const tx   = targetX - (sRect.left + sRect.width  / 2);
+    const ty   = targetY - (sRect.top  + sRect.height / 2);
+    const spin = (Math.random() - 0.5) * 70;
+    setPlaced((prev) => prev.map((p, idx) => (idx === i ? { tx, ty, spin, z: 100 + order } : p)));
   };
-  const onStickerMove = (e) => {
-    const d = dragInfo.current;
-    if (!d) return;
-    d.x = d.baseX + (e.clientX - d.startX);
-    d.y = d.baseY + (e.clientY - d.startY);
-    d.el.style.transform = `translate(${d.x}px, ${d.y}px) scale(1.12)`;
-  };
-  const onStickerUp = (e) => {
-    const d = dragInfo.current;
-    if (!d) return;
-    d.el.classList.remove('dragging');
-    try { d.el.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
-    const { x, y, i } = d;
-    dragInfo.current = null;
-    setStickerOffsets((prev) => prev.map((o, idx) => (idx === i ? { x, y } : o)));
-  };
-  // Tidy up: spring every sticker back to its original scattered spot
-  const tidyUp = () => setStickerOffsets(toolStickers.map(() => ({ x: 0, y: 0 })));
-  const stickersMoved = stickerOffsets.some((o) => o.x !== 0 || o.y !== 0);
+  // Tidy up: tip every tool back out of the cart, to its original scattered spot
+  const tidyUp = () => { placedOrder.current = 0; setPlaced(toolStickers.map(() => null)); };
+  const stickersMoved = placed.some(Boolean);
 
   return (
     <div className="about-page">
@@ -385,22 +376,45 @@ function About() {
           bottom: 155px;
           pointer-events: none;
         }
-        /* draggable wrapper — handles position + drag transform */
+        /* tappable wrapper — a tap drops the sticker into the cart */
         .tool-sticker-drag {
           position: absolute;
           pointer-events: auto;
-          cursor: grab;
-          touch-action: none;
+          cursor: pointer;
+          appearance: none;
+          -webkit-appearance: none;
+          background: none;
+          border: none;
+          padding: 0;
+          font: inherit;
+          color: inherit;
           user-select: none;
           -webkit-user-select: none;
-          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
           z-index: 3;
         }
         .tool-sticker-drag:hover { z-index: 50; }
-        .tool-sticker-drag.dragging {
-          cursor: grabbing;
-          transition: none;
-          z-index: 200;
+        .tool-sticker-drag:active { transform: scale(0.9); transition: transform 0.1s ease; }
+        /* tool tipped into the cart: drop + settle, then stay put */
+        .tool-sticker-drag.in-cart {
+          animation: fallIntoCart 0.72s forwards;
+          pointer-events: none;
+          cursor: default;
+        }
+        @keyframes fallIntoCart {
+          0% {
+            transform: translate(0, 0) rotate(0deg) scale(1);
+            animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.35);
+          }
+          62% {
+            transform: translate(var(--tx, 0), calc(var(--ty, 0) + 15px))
+                       rotate(var(--spin, 0deg)) scale(0.6);
+            animation-timing-function: cubic-bezier(0.3, 0, 0.4, 1);
+          }
+          100% {
+            transform: translate(var(--tx, 0), var(--ty, 0))
+                       rotate(var(--spin, 0deg)) scale(0.64);
+          }
         }
         .tool-sticker {
           position: relative;
@@ -408,7 +422,7 @@ function About() {
           filter: drop-shadow(0 4px 8px rgba(226, 115, 150, 0.3));
           animation: stickerDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
         }
-        .tool-sticker-drag.dragging .tool-sticker::after { opacity: 0 !important; }
+        .tool-sticker-drag.in-cart .tool-sticker::after { opacity: 0 !important; }
         @keyframes stickerDrop {
           from { opacity: 0; transform: translateY(-28px) scale(0.65) rotate(var(--rot,0deg)); }
           to   { opacity: 1; transform: translateY(0)      scale(1)    rotate(var(--rot,0deg)); }
@@ -692,36 +706,43 @@ function About() {
             <div className="journey-basket-wrap reveal" ref={addReveal}>
               {/* stickers scattered above the basket */}
               <div className="sticker-zone">
-                {toolStickers.map((s, i) => (
-                  <div
-                    key={i}
-                    className="tool-sticker-drag"
-                    style={{
-                      left: s.x, top: s.y,
-                      transform: `translate(${stickerOffsets[i].x}px, ${stickerOffsets[i].y}px)`,
-                    }}
-                    onPointerDown={(e) => onStickerDown(e, i)}
-                    onPointerMove={onStickerMove}
-                    onPointerUp={onStickerUp}
-                    onPointerCancel={onStickerUp}
-                  >
-                    <div
-                      className="tool-sticker"
-                      data-tooltip={s.alt}
-                      style={{ '--rot': s.rotate, animationDelay: `${i * 0.07}s` }}
+                {toolStickers.map((s, i) => {
+                  const p = placed[i];
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      className={`tool-sticker-drag${p ? ' in-cart' : ''}`}
+                      style={{
+                        left: s.x, top: s.y,
+                        ...(p && {
+                          '--tx': `${p.tx}px`,
+                          '--ty': `${p.ty}px`,
+                          '--spin': `${p.spin}deg`,
+                          zIndex: p.z,
+                        }),
+                      }}
+                      onClick={(e) => dropInCart(e, i)}
+                      aria-label={`Add ${s.alt} to the cart`}
                     >
-                      <img src={s.src} alt={s.alt} draggable={false} style={{ width: s.size, height: s.size }} />
-                    </div>
-                  </div>
-                ))}
+                      <div
+                        className="tool-sticker"
+                        data-tooltip={s.alt}
+                        style={{ '--rot': s.rotate, animationDelay: `${i * 0.07}s` }}
+                      >
+                        <img src={s.src} alt={s.alt} draggable={false} style={{ width: s.size, height: s.size }} />
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
               {/* Pink 3D shopping cart */}
-              <div className="basket-svg-wrap">
+              <div className="basket-svg-wrap" ref={cartRef}>
                 <img src={cartImg} alt="Skills shopping cart" style={{width:'100%',height:'auto',display:'block'}}/>
               </div>
               <div className="cart-status">
                 <p className={`cart-hint${stickersMoved ? '' : ' show'}`}>
-                  Try adding the tools into the tool cart
+                  Tap on the tools to add them to the cart
                 </p>
                 <button
                   className={`tidy-btn${stickersMoved ? ' show' : ''}`}

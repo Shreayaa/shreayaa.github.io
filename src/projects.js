@@ -28,8 +28,8 @@ import canvaLogo from './assets/tools/Canva.png';
 export const projects = [
   {
     id: 1,
-    title: "Cornell x Google Cloud Capstone Project",
-    description: "Designed a linear onboarding flow that reimagines how cloud platforms can guide non-technical users.",
+    title: "Capstone Project with Google Cloud",
+    description: "Redesigned the Google Cloud platform to offer a linear onboarding flow that creates a guided experience for users of all skill levels.",
     image: capstoneMockup,
     imageType: "laptop",
     caseStudyUrl: "/google-cloud-case-study",
@@ -38,8 +38,8 @@ export const projects = [
   },
   {
     id: 2,
-    title: "Ithaca Soap Redesign",
-    description: "Designed and developed a sustainable-first mobile app using Vue.js for a small business called Ithaca Soap.",
+    title: "Ithaca Soap App",
+    description: "Designed and developed a sustainable-first mobile app using Vue.js for a local business called Ithaca Soap.",
     image: ithacaSoapMockup,
     imageType: "mobile",
     caseStudyUrl: "/ithaca-soap-case-study",
@@ -48,7 +48,7 @@ export const projects = [
   },
   {
     id: 3,
-    title: "Routes to Roots App",
+    title: "Routes to Roots",
     description: "Developed a kiosk-based system that helps students reconnect with cultural hobbies promoting belonging in campus life.",
     image: routes,
     imageType: "mobile",
