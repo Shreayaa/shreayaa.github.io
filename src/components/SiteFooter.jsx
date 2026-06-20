@@ -1,12 +1,12 @@
 import React from 'react';
 import './site.css';
 
-function SquigglyArrow() {
+function StraightArrow() {
   return (
     <svg className="footer-arrow" viewBox="0 0 46 40" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-      {/* body: tail at lower-right, curves up to head at upper-left */}
+      {/* body: straight line from tail at lower-right to head at upper-left */}
       <path
-        d="M 40 34 C 28 28, 20 18, 8 7"
+        d="M 40 34 L 8 7"
         stroke="white" strokeWidth="2.2" strokeLinecap="round"
       />
       {/* arrowhead at upper-left, pointing ↖ */}
@@ -29,11 +29,11 @@ export default function SiteFooter() {
 
         <div className="footer-links">
           <a className="footer-link" href="https://www.linkedin.com/in/shreayaa-nadagudy-srinivasan-b41a271a8/" target="_blank" rel="noopener noreferrer">
-            <SquigglyArrow />
+            <StraightArrow />
             <span>LinkedIn</span>
           </a>
           <a className="footer-link" href="mailto:shreayaasrini@gmail.com">
-            <SquigglyArrow />
+            <StraightArrow />
             <span>Email</span>
           </a>
         </div>

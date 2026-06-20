@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SiteHeader from './components/SiteHeader';
 import SiteFooter from './components/SiteFooter';
@@ -6,6 +7,8 @@ import shreayaaPhoto from './assets/general/heroImage.png';
 import vennImage from './assets/general/Venn.png';
 import trophy from './assets/general/trophy.png';
 import gillyPhoto from './assets/general/Gilly.jpeg';
+import jeremyPhoto from './assets/general/Jeremy.jpeg';
+import hrishikaPhoto from './assets/general/Hrishika.jpeg';
 import About from './About';
 import Work from './work';
 import { projects } from './projects';
@@ -18,6 +21,288 @@ import RShinyCaseStudy from './rShiny';
 import Garden from './Garden';
 
 // designPrinciples removed — carousel was removed per request
+
+// Shared heart silhouette (24×24) reused by the envelope seal and the stamps.
+const HEART_PATH =
+  "M12 21 C12 21 3 14.5 3 8.5 C3 5.4 5.4 3 8.5 3 C10.3 3 11.6 4 12 4.8 C12.4 4 13.7 3 15.5 3 C18.6 3 21 5.4 21 8.5 C21 14.5 12 21 12 21 Z";
+
+/* Closed envelope (pink outline + heart seal). The flap lifts open via CSS when
+   the parent button has `.is-open` / on hover. Pure SVG so it scales crisply. */
+function EnvelopeArt() {
+  return (
+    <span className="env__art" aria-hidden="true">
+      <svg className="env__base" viewBox="0 0 240 168" preserveAspectRatio="none" fill="none">
+        <rect x="5" y="5" width="230" height="158" rx="14"
+              fill="rgba(255,255,255,0.5)" stroke="var(--env-stroke)" strokeWidth="3.5" />
+        <path d="M6 159 L120 102 L234 159" stroke="var(--env-stroke)"
+              strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <svg className="env__flap" viewBox="0 0 240 168" preserveAspectRatio="none" fill="none">
+        <path d="M6 9 L120 102 L234 9 Z" fill="rgba(255,255,255,0.72)"
+              stroke="var(--env-stroke)" strokeWidth="3.5" strokeLinejoin="round" />
+      </svg>
+      <svg className="env__heart" viewBox="0 0 24 24" fill="none">
+        <path d={HEART_PATH} fill="var(--env-heart)" />
+      </svg>
+    </span>
+  );
+}
+
+/* How the postcard reveals when a letter is clicked: 'inline' expands it in
+   place under the row; 'modal' opens it as a full-screen overlay. */
+const POSTCARD_MODE = 'modal';
+
+/* The opened air-mail postcard — shared by both reveal modes. */
+function PostcardLetter({ testimonial, onClose }) {
+  return (
+    <div className="postcard">
+      <button type="button" className="postcard__close" onClick={onClose} aria-label="Close letter">
+        &times;
+      </button>
+      <div className="postcard__inner">
+        <div className="postcard__content">
+          <p className="testimonial-quote">{testimonial.quote}</p>
+        </div>
+        <div className="postcard__divider" />
+        <div className="postcard__side">
+          <img src={testimonial.photo} alt={testimonial.name} className="postcard__photo" />
+          <span className="postcard__name">{testimonial.name}</span>
+          {testimonial.role && <span className="postcard__role">{testimonial.role}</span>}
+          {testimonial.note && <span className="postcard__note">{testimonial.note}</span>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+const SKILLS = [
+  "Prototyping", "Wireframing", "Interaction Design", "Accessibility", "Python",
+  "Javascript", "CSS", "HTML", "Figma", "Framer", "Webflow", "Sketch", "R Studio",
+  "Problem Solving", "Leadership", "User Research", "Design Systems", "A/B Testing",
+  "AI Workflows", "Claude Code", "Github Copilot",
+];
+
+/* Skills carousel: drifts on its own, pauses on hover/interaction, and can be driven
+   by mouse wheel, trackpad, click-drag, arrow buttons, keyboard arrows, or touch.
+   Uses a native overflow scroller (free touch + trackpad) with a rAF auto-drift on top
+   and a duplicated list for a seamless infinite loop. */
+function SkillsCarousel() {
+  const trackRef = useRef(null);
+  const hoverRef = useRef(false);
+  const interactUntil = useRef(0);
+  const manualVel = useRef(0);
+  const setRef = useRef(0); // width of one copy of the list
+
+  const bump = (ms = 1200) => { interactUntil.current = performance.now() + ms; };
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return undefined;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const AUTO_SPEED = reduce ? 0 : 0.55;
+
+    const measure = () => { setRef.current = el.scrollWidth / 3; };
+    measure();
+    el.scrollLeft = setRef.current; // rest in the middle copy so it loops both directions
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
+    // Seamless wrap: 3 identical copies, kept within the middle one so a shift of one
+    // copy-width is invisible — an infinite loop in both directions with no edge stop.
+    const wrap = () => {
+      const set = setRef.current;
+      if (set <= 0) return;
+      if (el.scrollLeft >= set * 2) el.scrollLeft -= set;
+      else if (el.scrollLeft < set) el.scrollLeft += set;
+    };
+
+    let raf = 0;
+    const tick = () => {
+      const paused = hoverRef.current || performance.now() < interactUntil.current;
+      let v = manualVel.current;
+      if (!paused) v += AUTO_SPEED;
+      if (v) el.scrollLeft += v;
+      wrap();
+      manualVel.current *= 0.9;
+      if (Math.abs(manualVel.current) < 0.04) manualVel.current = 0;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    // Wheel / vertical trackpad → horizontal scrub.
+    const onWheel = (e) => {
+      bump();
+      const d = Math.abs(e.deltaX) >= Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      el.scrollLeft += d;
+      wrap();
+      e.preventDefault();
+    };
+
+    // Mouse click-drag (touch keeps native scrolling).
+    let dragging = false, startX = 0, startScroll = 0;
+    const onPointerDown = (e) => {
+      if (e.pointerType !== 'mouse') { bump(); return; }
+      dragging = true;
+      startX = e.clientX;
+      startScroll = el.scrollLeft;
+      try { el.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+      el.classList.add('is-grabbing');
+      bump();
+      e.preventDefault();
+    };
+    const onPointerMove = (e) => {
+      if (!dragging) return;
+      el.scrollLeft = startScroll - (e.clientX - startX);
+      wrap();
+      bump();
+    };
+    const onPointerUp = (e) => {
+      if (dragging) {
+        dragging = false;
+        try { el.releasePointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+        el.classList.remove('is-grabbing');
+      }
+      bump();
+    };
+
+    const onTouch = () => bump();
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener('pointerdown', onPointerDown);
+    el.addEventListener('pointermove', onPointerMove);
+    el.addEventListener('pointerup', onPointerUp);
+    el.addEventListener('pointercancel', onPointerUp);
+    el.addEventListener('touchstart', onTouch, { passive: true });
+    el.addEventListener('touchmove', onTouch, { passive: true });
+
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('pointerdown', onPointerDown);
+      el.removeEventListener('pointermove', onPointerMove);
+      el.removeEventListener('pointerup', onPointerUp);
+      el.removeEventListener('pointercancel', onPointerUp);
+      el.removeEventListener('touchstart', onTouch);
+      el.removeEventListener('touchmove', onTouch);
+      ro.disconnect();
+    };
+  }, []);
+
+  const nudge = (dir) => { manualVel.current += dir * 22; bump(1400); };
+  const onKeyDown = (e) => {
+    if (e.key === 'ArrowRight') { nudge(1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { nudge(-1); e.preventDefault(); }
+  };
+
+  const items = [...SKILLS, ...SKILLS, ...SKILLS];
+
+  return (
+    <section className="skills">
+      <div
+        className="skills-carousel"
+        onMouseEnter={() => { hoverRef.current = true; }}
+        onMouseLeave={() => { hoverRef.current = false; }}
+      >
+        <button type="button" className="skills-arrow skills-arrow--left" onClick={() => nudge(-1)} aria-label="Scroll skills left">&lsaquo;</button>
+        <div
+          className="skills-track"
+          ref={trackRef}
+          tabIndex={0}
+          role="group"
+          aria-label="Skills — scroll, drag, or use the arrows"
+          onKeyDown={onKeyDown}
+        >
+          {items.map((skill, idx) => (
+            <span className="skill-chip" key={idx} aria-hidden={idx >= SKILLS.length ? 'true' : undefined}>{skill}</span>
+          ))}
+        </div>
+        <button type="button" className="skills-arrow skills-arrow--right" onClick={() => nudge(1)} aria-label="Scroll skills right">&rsaquo;</button>
+      </div>
+    </section>
+  );
+}
+
+
+const INTRO_LINE1 = "Hi, this is Shreayaa!";
+const INTRO_LINE2 = "Welcome to my little corner of the internet 🩷";
+const INTRO_L1 = [...INTRO_LINE1]; // split by code point so the emoji stays intact
+const INTRO_L2 = [...INTRO_LINE2];
+const INTRO_TOTAL = INTRO_L1.length + INTRO_L2.length;
+
+/* Opening overlay: types the two-line greeting in Cedarville cursive, then lifts up to
+   reveal the site. Shows once per browser session (first arrival) — not on in-app
+   navigation such as clicking the logo. Click to skip; skipped for reduced motion. */
+function IntroOverlay() {
+  const prefersReduced = typeof window !== 'undefined'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const [show, setShow] = useState(() => {
+    if (prefersReduced) return false;
+    try { return !sessionStorage.getItem('introSeen'); } catch (e) { return true; }
+  });
+  const [count, setCount] = useState(0);
+  const [leaving, setLeaving] = useState(false);
+  const timers = useRef([]);
+  const finished = useRef(false);
+
+  const later = (fn, ms) => { timers.current.push(setTimeout(fn, ms)); };
+  const clearAll = () => { timers.current.forEach(clearTimeout); timers.current = []; };
+
+  const dismiss = () => {
+    if (finished.current) return;
+    finished.current = true;
+    clearAll();
+    setLeaving(true);
+    later(() => setShow(false), 900);
+  };
+
+  useEffect(() => {
+    if (!show) return undefined;
+    try { sessionStorage.setItem('introSeen', '1'); } catch (e) { /* ignore */ }
+    document.body.style.overflow = 'hidden';
+    let i = 0;
+    const type = () => {
+      i += 1;
+      setCount(i);
+      if (i < INTRO_TOTAL) later(type, 42);
+      else later(dismiss, 950);
+    };
+    later(type, 400);
+    return () => { clearAll(); document.body.style.overflow = ''; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show]);
+
+  if (!show) return null;
+
+  const skip = () => { setCount(INTRO_TOTAL); dismiss(); };
+
+  const typed1 = INTRO_L1.slice(0, Math.min(count, INTRO_L1.length)).join('');
+  const typed2 = count > INTRO_L1.length ? INTRO_L2.slice(0, count - INTRO_L1.length).join('') : '';
+  const caretOnLine1 = count < INTRO_L1.length;
+
+  return (
+    <div
+      className={`intro-overlay${leaving ? ' is-leaving' : ''}`}
+      onClick={skip}
+      role="presentation"
+      aria-hidden="true"
+    >
+      <p className="intro-text">
+        <span className="intro-line1">
+          {typed1}
+          {caretOnLine1 && <span className="intro-caret" />}
+        </span>
+        <span className="intro-line2">
+          {typed2}
+          {!caretOnLine1 && <span className="intro-caret" />}
+        </span>
+      </p>
+    </div>
+  );
+}
 
 
 function HomePage() {
@@ -56,6 +341,23 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
   // Testimonial scroll reveal
   const testimonialRef = useRef(null);
   const [testimonialInView, setTestimonialInView] = useState(false);
+
+  // Which testimonial "letter" is currently open (by id), if any.
+  const [openId, setOpenId] = useState(null);
+  const lastOpenRef = useRef(null);
+
+  // Modal mode: close on Escape and lock body scroll while a letter is open.
+  useEffect(() => {
+    if (POSTCARD_MODE !== 'modal' || !openId) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setOpenId(null); };
+    document.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [openId]);
 
   useEffect(() => {
     const observers = [];
@@ -122,12 +424,79 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
     window.location.href = caseStudyUrl;
   };
 
+  // Testimonials shown as air-mail letters. Add more objects here as they come in.
+  const testimonials = [
+    {
+      id: 'gilly',
+      name: 'Gilly Leshed',
+      role: 'Teaching Professor, Cornell University',
+      photo: gillyPhoto,
+      note: 'Words from one of the most talented professors I learnt from',
+      quote: (
+        <>
+          &ldquo;I have witnessed her journey and growth toward becoming an exceptional
+          UX professional. Her projects were exemplary &mdash; literally &mdash;{' '}
+          <span className="tq-highlight">I have been using her projects as examples in the following semesters</span>. Her designs
+          were grounded in systematic, in-depth user research that followed ethical
+          principles. Shreayaa is a remarkably effective and{' '}
+          <span className="tq-highlight">proactive collaborator</span>. She was the
+          de-facto driver behind the group projects, with{' '}
+          <span className="tq-highlight">high work ethic and endless positive can-do attitude</span>. I have no doubt that Shreayaa will make a
+          strong, long-lasting impact in any organization that she will join.&rdquo;
+        </>
+      ),
+    },
+    {
+      id: 'jeremy',
+      name: 'Jeremy D. Faulk',
+      role: 'Design Researcher, Cornell University',
+      photo: jeremyPhoto,
+      note: 'One of the most creative person I have collaborated with',
+      quote: (
+        <>
+          &ldquo;Shreayaa has met every milestone of our human-computer-interaction
+          project. Her competence as a{' '}
+          <span className="tq-highlight">software-to-hardware engineer</span> has
+          enabled our interactive gallery installation to feature heart rate monitors
+          that capture scientific data while also triggering automated lighting and
+          sound effects. She is{' '}
+          <span className="tq-highlight">kind, skillful, and a good communicator</span>.
+          I would work with Shreayaa on every HCI project if I could.&rdquo;
+        </>
+      ),
+    },
+    {
+      id: 'hrishika',
+      name: 'Hrishika Jotwani',
+      photo: hrishikaPhoto,
+      note: 'I have the best peers to learn from and grow together',
+      quote: (
+        <>
+          &ldquo;Shreayaa and I worked on many group projects together, and{' '}
+          <span className="tq-highlight">she was a delight to work with, as a collaborator</span>. We spent hours
+          and hours brainstorming ideas, researching techniques and implementation
+          methods, discussing new strategies and{' '}
+          <span className="tq-highlight">learning a lot from each other</span>. I truly miss work with her, and
+          I&rsquo;m sure she has a lot to contribute to every team she works with!!&rdquo;
+        </>
+      ),
+    },
+  ];
+
+  if (openId) lastOpenRef.current = openId;
+  const activeTestimonial = testimonials.find(
+    (t) => t.id === (openId || lastOpenRef.current)
+  );
+
   return (
     <div className="app">
+      <IntroOverlay />
       <style>
         {`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light+Two&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Petit+Formal+Script&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
@@ -144,6 +513,63 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           --text-primary: #2d2d2d;
           --text-secondary: #4a4a4a;
         }
+
+        /* ── Opening intro overlay ─────────────────────────────────── */
+        .intro-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 10000;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 2rem;
+          text-align: center;
+          padding: 2rem;
+          background: linear-gradient(135deg, var(--beige) 0%, var(--mimi-pink) 35%, var(--light-blue) 70%, var(--amaranth-pink) 100%);
+          cursor: pointer;
+          transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1);
+          will-change: transform;
+        }
+        .intro-overlay.is-leaving { transform: translateY(-105%); }
+
+        .intro-text {
+          font-family: 'Cedarville Cursive', cursive;
+          font-size: clamp(1.5rem, 3.8vw, 2.4rem);
+          line-height: 1.4;
+          color: var(--text-primary);
+          max-width: min(95vw, 1200px);
+          margin: 0;
+        }
+
+        .intro-line1 {
+          display: block;
+          min-height: 1.15em;
+          font-family: 'Petit Formal Script', cursive;
+          font-size: clamp(2rem, 8vw, 5.2rem);
+          line-height: 1.15;
+          color: var(--rose-pompadour);
+          -webkit-text-stroke: 0.5px var(--rose-pompadour);
+          margin-bottom: 0.05em;
+        }
+
+        .intro-line2 {
+          display: block;
+          min-height: 1.2em;
+          color: var(--text-primary);
+        }
+
+        .intro-caret {
+          display: inline-block;
+          width: 3px;
+          height: 0.9em;
+          margin-left: 0.06em;
+          vertical-align: -0.08em;
+          border-radius: 2px;
+          background: currentColor;
+          animation: introBlink 0.9s steps(1, end) infinite;
+        }
+        @keyframes introBlink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
 
         .dm-sans {
           font-family: 'DM Sans', sans-serif;
@@ -471,55 +897,79 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           border-bottom: 1px solid rgba(226, 115, 150, 0.1);
         }
 
-        .skills-container {
+        .skills-carousel {
           position: relative;
-          height: 44px; /* slightly shorter */
-          display: flex;
-          align-items: center;
+          max-width: 1200px;
+          margin: 0 auto;
         }
 
-        .skills-strip {
+        .skills-track {
           display: flex;
-          white-space: nowrap;
-          animation: scrollSkills 120s linear infinite;
           gap: 3rem;
           align-items: center;
-          width: max-content;
+          overflow-x: auto;
+          overflow-y: hidden;
+          padding: 0.7rem 2.9rem;
+          touch-action: pan-x;
+          overscroll-behavior-x: contain;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          cursor: grab;
+          user-select: none;
+          -webkit-mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
         }
+        .skills-track::-webkit-scrollbar { display: none; }
+        .skills-track.is-grabbing { cursor: grabbing; }
+        .skills-track:focus-visible { outline: 2px solid var(--rose-pompadour); outline-offset: 3px; border-radius: 10px; }
 
-        .skills-strip span {
+        .skill-chip {
+          flex: 0 0 auto;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           font-weight: 700;
           font-size: 1rem;
           color: var(--text-secondary);
-          padding: 0.4rem 1.1rem; /* tighter vertical padding */
+          padding: 0.4rem 1.1rem;
           background: rgba(255, 255, 255, 0.98);
-          border-radius: 9999px !important;
-          -webkit-border-radius: 9999px !important;
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          background-clip: padding-box;
+          border-radius: 9999px;
           border: 1px solid rgba(226, 115, 150, 0.12);
-          transition: transform 180ms ease, box-shadow 180ms ease;
           font-family: 'DM Sans', sans-serif;
           box-shadow: 0 6px 18px rgba(226, 115, 150, 0.09);
-          flex-shrink: 0;
-          min-width: max-content;
+          white-space: nowrap;
           line-height: 1;
-          transform: translateZ(0);
+          transition: transform 180ms ease, box-shadow 180ms ease;
         }
-
-        .skills-strip span:hover {
+        .skill-chip:hover {
           transform: translateY(-3px) scale(1.02);
           box-shadow: 0 12px 30px rgba(226, 115, 150, 0.14);
         }
 
-        @keyframes scrollSkills {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+        .skills-arrow {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 3;
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          border: 1px solid rgba(226, 115, 150, 0.18);
+          background: rgba(255, 255, 255, 0.92);
+          color: var(--deep-rose);
+          font-size: 1.5rem;
+          line-height: 1;
+          display: grid;
+          place-items: center;
+          cursor: pointer;
+          box-shadow: 0 4px 14px rgba(226, 115, 150, 0.18);
+          transition: transform 0.18s ease, background 0.18s ease;
         }
+        .skills-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.12); }
+        .skills-arrow:active { transform: translateY(-50%) scale(0.95); }
+        .skills-arrow--left { left: 0.35rem; }
+        .skills-arrow--right { right: 0.35rem; }
 
         .design-section {
           background: rgba(255, 255, 255, 0.4);
@@ -962,17 +1412,224 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           transform: translateY(0);
         }
 
-        .testimonial-card {
-          display: flex;
-          align-items: flex-start;
-          gap: 3.5rem;
-          padding: 3rem 0;
-          border-top: 1px solid rgba(45, 45, 45, 0.12);
-          border-bottom: 1px solid rgba(45, 45, 45, 0.12);
+        /* ── Heading ─────────────────────────────────────────────── */
+        .testimonial-heading {
+          font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+          font-weight: 700;
+          font-size: clamp(1.6rem, 4vw, 2.4rem);
+          line-height: 1.2;
+          text-align: center;
+          color: var(--text-primary);
+          margin-bottom: 0.6rem;
         }
 
-        .testimonial-quote-side {
+        .testimonial-hint {
+          text-align: center;
+          font-family: 'Cedarville Cursive', cursive;
+          font-size: 1.2rem;
+          color: var(--deep-rose);
+          margin-bottom: 3rem;
+        }
+
+        /* ── Envelope row ────────────────────────────────────────── */
+        .envelope-row {
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          flex-wrap: wrap;
+          gap: clamp(1.5rem, 6vw, 4.5rem);
+          padding-top: 2.5rem; /* headroom for the flap as it lifts open */
+        }
+
+        .env {
+          --env-stroke: #e7a3c0;
+          --env-heart: #e2503a;
+          appearance: none;
+          background: none;
+          border: none;
+          padding: 0;
+          font: inherit;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.9rem;
+        }
+
+        .env__art {
+          position: relative;
+          width: clamp(156px, 19vw, 190px);
+          aspect-ratio: 240 / 168;
+          perspective: 750px;
+          transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+          filter: drop-shadow(0 12px 18px rgba(197, 85, 119, 0.2));
+        }
+        .env:hover .env__art,
+        .env:focus-visible .env__art { transform: translateY(-7px) rotate(-1deg); }
+
+        .env__base,
+        .env__flap { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .env__base { z-index: 1; }
+        .env__flap {
+          z-index: 3;
+          transform-origin: 50% 5.5%;
+          transform: rotateX(0deg);
+          transition: transform 0.55s cubic-bezier(0.6, 0.04, 0.3, 1);
+          backface-visibility: visible;
+        }
+        .env:hover .env__flap,
+        .env:focus-visible .env__flap { transform: rotateX(26deg); }
+
+        .env__heart {
+          position: absolute;
+          left: 50%;
+          top: 60.5%;
+          width: 14%;
+          transform: translate(-50%, -50%);
+          z-index: 4;
+          transition: opacity 0.3s ease, transform 0.4s ease;
+        }
+
+        .env.is-open .env__flap { transform: rotateX(174deg); z-index: 2; }
+        .env.is-open .env__heart { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+        .env.is-open .env__art { transform: translateY(-3px); }
+
+        .env__caption {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 1rem;
+          font-weight: 500;
+          color: var(--text-primary);
+          transition: color 0.2s ease;
+        }
+        .env:hover .env__caption,
+        .env.is-open .env__caption { color: var(--deep-rose); }
+
+        /* ── Inline air-mail postcard reveal ─────────────────────── */
+        .postcard-wrap {
+          display: grid;
+          grid-template-rows: 0fr;
+          opacity: 0;
+          margin-top: 0;
+          transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                      opacity 0.4s ease, margin-top 0.5s ease;
+        }
+        .postcard-wrap.open { grid-template-rows: 1fr; opacity: 1; margin-top: 3.25rem; }
+        .postcard-min { overflow: hidden; min-height: 0; }
+
+        .postcard {
+          position: relative;
+          background: repeating-linear-gradient(45deg,
+            #e23b3b 0 13px, #f4a6c0 13px 26px, #ffffff 26px 39px);
+          padding: 14px;
+          border-radius: 18px;
+          box-shadow: 0 26px 55px rgba(45, 45, 45, 0.22);
+          transform: translateY(14px);
+          transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .postcard-wrap.open .postcard { transform: translateY(0); }
+
+        /* Modal variant: full-screen overlay (rendered via portal to <body>) */
+        .postcard-modal {
+          position: fixed;
+          inset: 0;
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: clamp(1rem, 4vw, 3rem);
+          background: rgba(58, 34, 44, 0.55);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
+          animation: postcardFade 0.28s ease;
+        }
+        @keyframes postcardFade { from { opacity: 0; } to { opacity: 1; } }
+
+        .postcard-modal__card {
+          width: min(940px, 100%);
+          max-height: 90vh;
+          overflow: auto;
+          animation: postcardPop 0.42s cubic-bezier(0.34, 1.4, 0.6, 1);
+        }
+        @keyframes postcardPop {
+          from { opacity: 0; transform: translateY(22px) scale(0.95); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .postcard-modal__card .postcard { transform: none; }
+
+        .postcard__close {
+          position: absolute;
+          top: 12px;
+          left: 12px;
+          z-index: 6;
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          border: none;
+          cursor: pointer;
+          background: rgba(255, 255, 255, 0.92);
+          color: #c5375a;
+          font-size: 1.4rem;
+          line-height: 1;
+          display: grid;
+          place-items: center;
+          box-shadow: 0 3px 9px rgba(0, 0, 0, 0.18);
+          transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .postcard__close:hover { transform: scale(1.12); background: #fff; }
+
+        .postcard__inner {
+          position: relative;
+          background: #fffdf7;
+          border-radius: 9px;
+          display: flex;
+          gap: 2.5rem;
+          padding: 2.6rem 2.8rem;
+          min-height: 290px;
+        }
+
+        .postcard__content { flex: 1.4; display: flex; align-items: center; }
+        .postcard__content .testimonial-quote { margin: 0; font-size: 1.05rem; line-height: 1.75; }
+
+        .postcard__divider { width: 1px; background: rgba(45, 45, 45, 0.16); align-self: stretch; }
+
+        .postcard__side {
           flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          gap: 0.3rem;
+        }
+
+        .postcard__photo {
+          width: 96px;
+          height: 96px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 4px solid #fff;
+          box-shadow: 0 8px 20px rgba(197, 85, 119, 0.22);
+          margin-bottom: 0.4rem;
+        }
+        .postcard__name {
+          font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+          font-weight: 700;
+          font-size: 1.12rem;
+          color: var(--text-primary);
+        }
+        .postcard__role {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.9rem;
+          color: var(--text-secondary);
+        }
+        .postcard__note {
+          margin-top: 0.7rem;
+          max-width: 210px;
+          font-family: 'Cedarville Cursive', cursive;
+          font-size: 1.1rem;
+          line-height: 1.25;
+          color: var(--deep-rose);
+          transform: rotate(-2deg);
         }
 
         .testimonial-quote {
@@ -980,7 +1637,6 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           font-size: 1.15rem;
           line-height: 1.75;
           color: var(--text-primary);
-          margin-bottom: 1.75rem;
         }
 
         .tq-highlight {
@@ -989,76 +1645,6 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           border-radius: 0.5em 0.28em 0.45em 0.3em;
           -webkit-box-decoration-break: clone;
           box-decoration-break: clone;
-        }
-
-        .testimonial-attribution {
-          display: flex;
-          flex-direction: column;
-          gap: 0.15rem;
-        }
-
-        .testimonial-name {
-          font-family: Georgia, Cambria, "Times New Roman", Times, serif;
-          font-weight: 700;
-          font-size: 1.15rem;
-          color: var(--text-primary);
-        }
-
-        .testimonial-role {
-          font-family: 'DM Sans', sans-serif;
-          font-size: 0.95rem;
-          color: var(--text-secondary);
-        }
-
-        .testimonial-photo-side {
-          flex-shrink: 0;
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          margin-top: 0.5rem;
-        }
-
-        .testimonial-photo {
-          width: 160px;
-          height: 160px;
-          border-radius: 50%;
-          object-fit: cover;
-          background: linear-gradient(135deg, var(--mimi-pink), var(--light-blue));
-          border: 4px solid rgba(255, 255, 255, 0.6);
-          box-shadow: 0 12px 30px rgba(197, 85, 119, 0.15);
-        }
-
-        /* Hand-drawn annotation pointing from the photo */
-        .testimonial-annotation {
-          position: absolute;
-          top: calc(100% + 0.5rem);
-          right: 0;
-          display: flex;
-          align-items: flex-start;
-          gap: 0.35rem;
-          width: 262px;
-          pointer-events: none;
-        }
-
-        .testimonial-arrow {
-          flex-shrink: 0;
-          width: 64px;
-          height: auto;
-          margin-top: -4px;
-          color: #1a1a1a;
-        }
-
-        .testimonial-annotation-text {
-          flex-shrink: 0;
-          width: 190px;
-          font-family: 'Shadows Into Light Two', cursive;
-          font-weight: 400;
-          font-size: 1.2rem;
-          line-height: 1.2;
-          text-align: center;
-          color: #1f1f1f;
-          transform: rotate(-3deg);
         }
 
 
@@ -1101,31 +1687,17 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
             height: 260px;
           }
 
-          .testimonial-card {
-            flex-direction: column-reverse;
-            align-items: center;
-            gap: 2rem;
-            text-align: center;
-            padding: 2.5rem 0;
+          .postcard__inner {
+            flex-direction: column;
+            gap: 1.75rem;
+            padding: 2.25rem 1.5rem 2.5rem;
           }
 
-          .testimonial-attribution {
-            align-items: center;
-          }
+          .postcard__divider { width: auto; height: 1px; }
 
-          .testimonial-photo-side {
-            align-items: center;
-            margin-top: 0;
-          }
-
-          .testimonial-photo {
-            width: 130px;
-            height: 130px;
-          }
-
-          .testimonial-annotation {
-            display: none;
-          }
+          /* stacked envelopes need extra row spacing so an opened flap clears the caption above */
+          .envelope-row { row-gap: 5.5rem; }
+          .env__art { width: clamp(150px, 52vw, 178px); }
 
         }
 
@@ -1144,10 +1716,14 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
             height: 240px;
           }
 
-          .skills-strip span {
+          .skill-chip {
             font-size: 0.9rem;
-            padding: 0.7rem 1.2rem;
+            padding: 0.4rem 1rem;
           }
+
+          .skills-track { gap: 1.5rem; padding-left: 2.5rem; padding-right: 2.5rem; }
+
+          .skills-arrow { width: 32px; height: 32px; font-size: 1.25rem; }
 
           .design-content {
             gap: 2rem;
@@ -1184,7 +1760,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
                 <br />
                 <span className="typewriter">
                   I'm a {typewriterText}
-                  <span style={{borderRight: '2px solid', animation: 'blink 1s infinite'}}>|</span>
+                  <span style={{animation: 'blink 1s infinite'}}>|</span>
                 </span>
               </h1>
               <p className="dm-sans">
@@ -1205,24 +1781,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
       </section>
 
       {/* FIXED SKILLS STRIP */}
-      <section className="skills" style={{position: 'relative'}}>
-        <div className="skills-inner">
-          <div className="skills-container">
-            <div className="skills-strip">
-              {[
-                ...["Prototyping", "Wireframing", "Interaction Design", "Accessibility", "Python",
-                   "Javascript", "CSS", "HTML", "Figma", "Framer", "Webflow", "Sketch", "R Studio",
-                   "Problem Solving", "Leadership", "User Research", "Design Systems", "A/B Testing"],
-                ...["Prototyping", "Wireframing", "Interaction Design", "Accessibility", "Python",
-                   "Javascript", "CSS", "HTML", "Figma", "Framer", "Webflow", "Sketch", "R Studio",
-                   "Problem Solving", "Leadership", "User Research", "Design Systems", "A/B Testing"]
-              ].map((skill, idx) => (
-                <span key={idx}>{skill}</span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <SkillsCarousel />
 
       {/* IMPROVED DESIGN PRINCIPLES SECTION */}
       <section className="design-section">
@@ -1298,37 +1857,55 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
               ))}
           </section>
 
-          {/* TESTIMONIAL (under Routes to Roots) */}
+          {/* WORDS THAT MOTIVATE ME — testimonials as openable air-mail letters */}
           <section
             ref={testimonialRef}
             className={`testimonial-section${testimonialInView ? ' in-view' : ''}`}
-            aria-label="Testimonial"
+            aria-label="Testimonials"
           >
-            <div className="testimonial-card">
-              <div className="testimonial-quote-side">
-                <p className="testimonial-quote">
-                  &ldquo;I have witnessed her journey and growth toward becoming an exceptional
-                  UX professional. Her projects were exemplary &mdash; literally &mdash;{' '}
-                  <span className="tq-highlight">I have been using her projects as examples in the following semesters</span>. Her designs
-                  were grounded in systematic, in-depth user research that followed ethical
-                  principles. Shreayaa is a remarkably effective and{' '}
-                  <span className="tq-highlight">proactive collaborator</span>. She was
-                  the de-facto driver behind the group projects, with{' '}
-                  <span className="tq-highlight">high work ethic and endless positive can-do attitude</span>. I have no doubt that Shreayaa will make a
-                  strong, long-lasting impact in any organization that she will join.&rdquo;
-                </p>
-                <div className="testimonial-attribution">
-                  <span className="testimonial-name">&mdash; Gilly Leshed</span>
-                  <span className="testimonial-role">Teaching Professor, Cornell University</span>
+            <h2 className="testimonial-heading">Words that motivate me to keep going</h2>
+            <p className="testimonial-hint">tap a letter to open it</p>
+
+            <div className="envelope-row">
+              {testimonials.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  className={`env${openId === t.id ? ' is-open' : ''}`}
+                  aria-expanded={openId === t.id}
+                  aria-label={`${openId === t.id ? 'Close' : 'Open'} the letter from ${t.name}`}
+                  onClick={() => setOpenId(openId === t.id ? null : t.id)}
+                >
+                  <EnvelopeArt />
+                  <span className="env__caption">from {t.name}</span>
+                </button>
+              ))}
+            </div>
+
+            {POSTCARD_MODE === 'inline' ? (
+              <div className={`postcard-wrap${openId ? ' open' : ''}`}>
+                <div className="postcard-min">
+                  {activeTestimonial && (
+                    <PostcardLetter testimonial={activeTestimonial} onClose={() => setOpenId(null)} />
+                  )}
                 </div>
               </div>
-              <div className="testimonial-photo-side">
-                <img src={gillyPhoto} alt="Gilly Leshed" className="testimonial-photo" />
-                <span className="testimonial-annotation-text">
-                  Words from one of the most talented professors I learnt from
-                </span>
-              </div>
-            </div>
+            ) : (
+              openId && activeTestimonial && createPortal(
+                <div
+                  className="postcard-modal"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label={`Letter from ${activeTestimonial.name}`}
+                  onClick={() => setOpenId(null)}
+                >
+                  <div className="postcard-modal__card" onClick={(e) => e.stopPropagation()}>
+                    <PostcardLetter testimonial={activeTestimonial} onClose={() => setOpenId(null)} />
+                  </div>
+                </div>,
+                document.body
+              )
+            )}
           </section>
         </div>
       </section>

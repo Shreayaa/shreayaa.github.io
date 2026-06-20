@@ -146,7 +146,7 @@ export default function RoutesToRoots() {
 
         html {
           min-height: 100%;
-          background: linear-gradient(160deg, #eaf2d7 0%, #efcfe3 35%, #b3dee2 70%, #ea9ab2 100%);
+          background: #ECEBE1;
         }
         body {
           min-height: 100%;
