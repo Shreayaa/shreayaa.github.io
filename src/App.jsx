@@ -146,7 +146,7 @@ function SkillsCarousel() {
       dragging = true;
       startX = e.clientX;
       startScroll = el.scrollLeft;
-      try { el.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+      try { el.setPointerCapture(e.pointerId); } catch { /* ignore */ }
       el.classList.add('is-grabbing');
       bump();
       e.preventDefault();
@@ -160,7 +160,7 @@ function SkillsCarousel() {
     const onPointerUp = (e) => {
       if (dragging) {
         dragging = false;
-        try { el.releasePointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+        try { el.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
         el.classList.remove('is-grabbing');
       }
       bump();
@@ -241,7 +241,7 @@ function IntroOverlay() {
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const [show, setShow] = useState(() => {
     if (prefersReduced) return false;
-    try { return !sessionStorage.getItem('introSeen'); } catch (e) { return true; }
+    try { return !sessionStorage.getItem('introSeen'); } catch { return true; }
   });
   const [count, setCount] = useState(0);
   const [leaving, setLeaving] = useState(false);
@@ -261,7 +261,7 @@ function IntroOverlay() {
 
   useEffect(() => {
     if (!show) return undefined;
-    try { sessionStorage.setItem('introSeen', '1'); } catch (e) { /* ignore */ }
+    try { sessionStorage.setItem('introSeen', '1'); } catch { /* ignore */ }
     document.body.style.overflow = 'hidden';
     let i = 0;
     const type = () => {
@@ -908,7 +908,10 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
 
         .skills-carousel {
           position: relative;
-          max-width: 1200px;
+          width: 100%;
+          /* span the full strip on wide screens instead of capping at 1200px and
+             leaving empty margins on both sides */
+          max-width: none;
           margin: 0 auto;
         }
 
