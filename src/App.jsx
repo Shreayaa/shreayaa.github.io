@@ -101,7 +101,7 @@ function SkillsCarousel() {
     if (!el) return undefined;
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const AUTO_SPEED = reduce ? 0 : 0.55;
+    const AUTO_SPEED = reduce ? 0 : 0.4;
 
     const measure = () => { setRef.current = el.scrollWidth / 3; };
     measure();
@@ -502,6 +502,14 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
+        @font-face {
+          font-family: 'Lovely Coffee';
+          src: url('/fonts/LovelyCoffee.ttf') format('truetype');
+          font-weight: normal;
+          font-style: normal;
+          font-display: swap;
+        }
+
         :root {
           --rose-pompadour: #e27396;
           --amaranth-pink: #ea9ab2;
@@ -545,7 +553,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
         .intro-line1 {
           display: block;
           min-height: 1.15em;
-          font-family: 'Petit Formal Script', cursive;
+          font-family: 'Lovely Coffee', 'Petit Formal Script', cursive;
           font-size: clamp(2rem, 8vw, 5.2rem);
           line-height: 1.15;
           color: var(--rose-pompadour);
@@ -600,6 +608,7 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
         }
 
         .content-container {
+          width: 100%;
           max-width: 1200px;
           margin: 0 auto;
           padding: 0 2rem;
@@ -1660,6 +1669,11 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
             max-width: 100%;
           }
 
+          /* clamp floor of 350px overflows narrow screens — scale the photo to the viewport */
+          .hero-photo img {
+            width: min(340px, 72vw);
+          }
+
           .design-content {
             flex-direction: column;
             align-items: center;
@@ -1685,6 +1699,54 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
             width: 90%;
             min-width: 280px;
             height: 260px;
+          }
+
+          /* Project rows: stack into a single column so the mockup sits above the
+             text instead of being squeezed side-by-side on narrow screens */
+          .project-row,
+          .project-row.reverse {
+            flex-direction: column;
+            gap: 1.75rem;
+            min-height: auto;
+            margin-bottom: 3.5rem;
+            text-align: center;
+          }
+
+          .mockup-side {
+            width: 100%;
+            min-height: auto;
+          }
+
+          .mockup-image-wrapper {
+            height: auto;
+            max-height: 300px;
+          }
+
+          .mockup-image-wrapper.mobile .mockup-image {
+            height: auto;
+            width: auto;
+            max-height: 300px;
+            max-width: 78%;
+          }
+
+          .content-side {
+            width: 100%;
+            padding: 0;
+          }
+
+          .project-title {
+            font-size: 1.85rem;
+            margin-bottom: 1rem;
+          }
+
+          .project-description {
+            font-size: 1rem;
+          }
+
+          .project-tags,
+          .tool-logos-row,
+          .award-badge {
+            justify-content: center;
           }
 
           .postcard__inner {
@@ -1724,6 +1786,10 @@ const words = React.useMemo(() => ["designer.", "researcher.", "strategist."], [
           .skills-track { gap: 1.5rem; padding-left: 2.5rem; padding-right: 2.5rem; }
 
           .skills-arrow { width: 32px; height: 32px; font-size: 1.25rem; }
+
+          .project-title { font-size: 1.6rem; }
+          .mockup-image-wrapper { max-height: 260px; }
+          .mockup-image-wrapper.mobile .mockup-image { max-height: 260px; }
 
           .design-content {
             gap: 2rem;
